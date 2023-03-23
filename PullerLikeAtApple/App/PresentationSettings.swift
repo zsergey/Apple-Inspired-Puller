@@ -13,7 +13,7 @@ class PresentationSettings {
     
     var slowAnimations: Bool = false
     var dragIndicator: PullerModel.DragIndicator = .none
-    var pullerAnimator: PullerAnimator = .default
+    var animator: PullerAnimator = .default
     var largestUndimmedDetent: PullerModel.Detent = .custom(0.25)
     var scrollingExpandsWhenScrolledToEdge: Bool = true
     var keyboardExpands: Bool = true
@@ -23,7 +23,7 @@ class PresentationSettings {
     func makePullerModel(detents: [PullerModel.Detent]? = nil,
                          isSettings: Bool = false,
                          hasDynamicHeight: Bool = true) -> PullerModel {
-        PullerModel(animator: pullerAnimator.duration(isSettings ? 0.5 : (slowAnimations ? 5 : 0.5)),
+        PullerModel(animator: animator.duration(isSettings ? 0.5 : (slowAnimations ? 5 : 0.5)),
                     detents: detents ?? [.custom(0.25), .medium, .large],
                     dragIndicator: dragIndicator,
                     isClosingLockedBySwipe: isSettings ? false : isClosingLockedBySwipe,

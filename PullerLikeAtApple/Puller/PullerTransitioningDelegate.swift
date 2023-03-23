@@ -11,12 +11,12 @@ final class PullerTransitioningDelegate: NSObject {
     
     private let model: PullerModel
     private let animationController: PullerAnimationController
-    private weak var fromViewController: UIViewController?
     
-    init(model: PullerModel, fromViewController: UIViewController) {
+    init(model: PullerModel, viewController: UIViewController) {
         self.model = model
-        self.fromViewController = fromViewController
-        self.animationController = PullerAnimationController(model: model, isPresenting: true)
+        self.animationController = PullerAnimationController(model: model,
+                                                             viewController: viewController,
+                                                             isPresenting: true)
     }
 }
 

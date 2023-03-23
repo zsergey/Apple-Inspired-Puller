@@ -12,10 +12,13 @@ final class PullerAnimationController: NSObject {
     var isPresenting: Bool
     
     private let model: PullerModel
-        
+    private weak var viewController: UIViewController?
+    
     init(model: PullerModel,
+         viewController: UIViewController?,
          isPresenting: Bool) {
         self.model = model
+        self.viewController = viewController
         self.isPresenting = isPresenting
     }
     
@@ -26,7 +29,7 @@ final class PullerAnimationController: NSObject {
         
         toViewController.view.frame.origin.y = fromViewController.view.frame.maxY
 
-        model.pullerAnimator.animate { [weak self] in
+        model.animator.animate { [weak self] in
             guard let model = self?.model else {
                 return
             }
@@ -71,7 +74,7 @@ final class PullerAnimationController: NSObject {
         
         model.onWillDismiss?()
 
-        model.pullerAnimator.animate {
+        model.animator.animate {
             
             let value = UIScreen.main.bounds.maxY
             fromViewController.view.frame.origin.y = value
@@ -83,12 +86,14 @@ final class PullerAnimationController: NSObject {
             
         } completion: { [weak self] _ in
             
-            self?.model.onDidDismiss?()
-
             toViewController.view.layer.setCornerRadius(0)
             fromViewController.endAppearanceTransition()
             toViewController.endAppearanceTransition()
             transitionContext.completeTransition(!transitionContext.transitionWasCancelled)
+            
+            self?.viewController?.pullerTransitioningDelegate = nil
+
+            self?.model.onDidDismiss?()
         }
     }
 }
@@ -97,7 +102,7 @@ extension PullerAnimationController: UIViewControllerAnimatedTransitioning {
     
     func transitionDuration(using transitionContext: UIViewControllerContextTransitioning?) -> TimeInterval {
         
-        model.pullerAnimator.duration
+        model.animator.duration
     }
     
     func animateTransition(using transitionContext: UIViewControllerContextTransitioning) {

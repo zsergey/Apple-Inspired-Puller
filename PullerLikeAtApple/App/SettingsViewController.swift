@@ -39,7 +39,7 @@ class SettingsViewController: UIViewController {
 
         let settings = PresentationSettings.sharedInstance
 
-        pullerAnimatorControl.selectedSegmentIndex = settings.pullerAnimator.damping == 1.0 ? 0 : 1
+        pullerAnimatorControl.selectedSegmentIndex = settings.animator.damping == 1.0 ? 0 : 1
 
         slowAnimationsSwitch.isOn = settings.slowAnimations
         
@@ -77,9 +77,9 @@ class SettingsViewController: UIViewController {
     }
     
     @IBAction func pullerAnimatorChanged(_ sender: UISegmentedControl) {
-        let pullerAnimator: PullerAnimator = sender.selectedSegmentIndex == 0 ? .default : .spring
+        let animator: PullerAnimator = sender.selectedSegmentIndex == 0 ? .default : .spring
         
-        PresentationSettings.sharedInstance.pullerAnimator = pullerAnimator
+        PresentationSettings.sharedInstance.animator = animator
         updateSheet()
     }
     

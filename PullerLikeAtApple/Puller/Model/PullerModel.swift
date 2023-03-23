@@ -11,7 +11,7 @@ import UIKit
 struct PullerModel {
     
     /// How to animate a puller
-    let pullerAnimator: PullerAnimator
+    let animator: PullerAnimator
     
     /// Positions of a puller where it can chill
     let detents: [Detent]
@@ -70,7 +70,7 @@ struct PullerModel {
                 return detent
             }
         }).sorted(by: <)
-        self.pullerAnimator = animator
+        self.animator = animator
         self.cornerRadius = cornerRadius
         self.dragIndicator = dragIndicator
         self.isClosingLockedBySwipe = isClosingLockedBySwipe

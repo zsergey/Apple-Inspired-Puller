@@ -26,7 +26,7 @@ extension UIViewController {
     }
     
     /// To make any `ViewController` displayable as a puller, it is necessary to store a strong reference to the `PullerTransitioningDelegate` somewhere.
-    private(set) var pullerTransitioningDelegate: PullerTransitioningDelegate? {
+    var pullerTransitioningDelegate: PullerTransitioningDelegate? {
         get {
             return objc_getAssociatedObject(self, &AssociatedKeys.pullerTransitioningDelegate) as? PullerTransitioningDelegate
         }
@@ -47,7 +47,7 @@ extension UIViewController {
             return
         }
         
-        pullerTransitioningDelegate = PullerTransitioningDelegate(model: model, fromViewController: self)
+        pullerTransitioningDelegate = PullerTransitioningDelegate(model: model, viewController: self)
         viewController.modalPresentationStyle = .custom
         viewController.transitioningDelegate = pullerTransitioningDelegate
         

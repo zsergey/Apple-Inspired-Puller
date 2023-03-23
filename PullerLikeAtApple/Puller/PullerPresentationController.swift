@@ -39,6 +39,7 @@ final class PullerPresentationController: UIPresentationController {
     private var fromView: UIView { presentingViewController.view }
     private var toView: UIView { presentedViewController.view }
     private var toViewController: UIViewController { presentedViewController }
+    private var isPhone: Bool { UIDevice.current.userInterfaceIdiom == .phone }
     
     private let keyboard = Keyboard()
     private var isKeyboardVisible: Bool = false
@@ -156,7 +157,7 @@ final class PullerPresentationController: UIPresentationController {
     
     func animateChanges(_ changes: @escaping () -> Void) {
         
-        model.pullerAnimator.animate { [weak self] in
+        model.animator.animate { [weak self] in
             changes()
             self?.layoutPullerIfNeeded()
         }
@@ -207,7 +208,7 @@ final class PullerPresentationController: UIPresentationController {
     }
     
     private func hideDragIndicatorView() {
-        model.pullerAnimator.animate { [weak self] in
+        model.animator.animate { [weak self] in
             self?.dragIndicatorView?.alpha = 0
         } completion: { [weak self] _ in
             self?.dragIndicatorView?.removeFromSuperview()
@@ -519,7 +520,7 @@ final class PullerPresentationController: UIPresentationController {
         }
         
         var offset = touchPoint.y - startedTouchPoint.y
-        let exponent: CGFloat = model.hasDynamicHeight ? 0.6 : 0.8
+        let exponent: CGFloat = model.hasDynamicHeight ? 0.7 : 0.8
         offset = offset > 0 ? pow(offset, exponent) : -pow(-offset, exponent)
         
         let isMovingByView = panGestureSource == .view
@@ -561,7 +562,7 @@ final class PullerPresentationController: UIPresentationController {
         
         let isChangedDetent = selectedDetent != closestDetent
         
-        self.model.pullerAnimator.animate { [weak self] in
+        self.model.animator.animate { [weak self] in
             guard let self = self else {
                 return
             }
@@ -666,7 +667,7 @@ final class PullerPresentationController: UIPresentationController {
         
         guard let lastDetent = detents.last,
               lastDetent.isExpanded,
-              UIDevice.current.userInterfaceIdiom == .phone,
+              isPhone,
               screenHeight > screenWidth,
               fromView.frame.size.height > fromView.frame.size.width else {
             
@@ -705,7 +706,7 @@ final class PullerPresentationController: UIPresentationController {
         let fromRadius = maxRadius + minRadius - toRadius
         
         fromView.layer.setCornerRadius(fromRadius)
-        if lastDetent.isFull {
+        if lastDetent.isFull && isPhone && screenWidth < screenHeight {
             toView.layer.setCornerRadius(toRadius).adjustMasksToBounds()
             shadowView.layer.setCornerRadius(toRadius)
         } else {
@@ -757,7 +758,7 @@ final class PullerPresentationController: UIPresentationController {
             self.layoutPullerIfNeeded()
         }
         
-        model.pullerAnimator.animate(animations) { [weak self] _ in
+        model.animator.animate(animations) { [weak self] _ in
             guard let self = self else {
                 return
             }

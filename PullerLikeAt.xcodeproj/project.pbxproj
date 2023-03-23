@@ -7,12 +7,12 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		AD08E66C29CC1ACA00581DBA /* PullerPresentationController.swift in Sources */ = {isa = PBXBuildFile; fileRef = ADC11A6129B8197900EEF274 /* PullerPresentationController.swift */; };
 		AD2FDE74299D20EB007FA7B1 /* AppleSheet.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD2FDE73299D20EB007FA7B1 /* AppleSheet.swift */; };
 		AD30F2F429CB4C4E0056BB40 /* UISegmentedControlExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD30F2F329CB4C4E0056BB40 /* UISegmentedControlExtensions.swift */; };
 		AD67DCBC29B9B2D30045354C /* UIScrollViewExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD67DCBB29B9B2D30045354C /* UIScrollViewExtensions.swift */; };
 		ADB508A129BB6EB400673FAA /* CATransactionExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = ADB508A029BB6EB400673FAA /* CATransactionExtensions.swift */; };
 		ADC11A6029B8195B00EEF274 /* PullerAnimationController.swift in Sources */ = {isa = PBXBuildFile; fileRef = ADC11A5F29B8195B00EEF274 /* PullerAnimationController.swift */; };
-		ADC11A6229B8197900EEF274 /* PullerPresentationController.swift in Sources */ = {isa = PBXBuildFile; fileRef = ADC11A6129B8197900EEF274 /* PullerPresentationController.swift */; };
 		ADCC4B3529CB126E00527E3C /* AppleDetent.swift in Sources */ = {isa = PBXBuildFile; fileRef = ADCC4B3429CB126E00527E3C /* AppleDetent.swift */; };
 		ADCC4B3E29CB309200527E3C /* PullerModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = ADCC4B3C29CB309200527E3C /* PullerModel.swift */; };
 		ADCC4B3F29CB309200527E3C /* PullerAnimator.swift in Sources */ = {isa = PBXBuildFile; fileRef = ADCC4B3D29CB309200527E3C /* PullerAnimator.swift */; };
@@ -294,7 +294,6 @@
 				ADCC4B6429CB340400527E3C /* PresentationSettings.swift in Sources */,
 				ADD1CC12299F6A4D0029B536 /* UIViewControllerExtensions.swift in Sources */,
 				ADCC4B3529CB126E00527E3C /* AppleDetent.swift in Sources */,
-				ADC11A6229B8197900EEF274 /* PullerPresentationController.swift in Sources */,
 				AD2FDE74299D20EB007FA7B1 /* AppleSheet.swift in Sources */,
 				ADCC4B6329CB340400527E3C /* SomeViewController.swift in Sources */,
 				ADD754A7299E80DC005EC3BD /* CALayerExtensions.swift in Sources */,
@@ -305,6 +304,7 @@
 				ADCC4B4629CB310800527E3C /* PullerShadowView.swift in Sources */,
 				AD67DCBC29B9B2D30045354C /* UIScrollViewExtensions.swift in Sources */,
 				AD30F2F429CB4C4E0056BB40 /* UISegmentedControlExtensions.swift in Sources */,
+				AD08E66C29CC1ACA00581DBA /* PullerPresentationController.swift in Sources */,
 				ADCC4B6529CB340400527E3C /* main.m in Sources */,
 				ADB508A129BB6EB400673FAA /* CATransactionExtensions.swift in Sources */,
 				ADCC4B4829CB317500527E3C /* Shadow.swift in Sources */,
@@ -463,7 +463,7 @@
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 92;
+				CURRENT_PROJECT_VERSION = 93;
 				DEVELOPMENT_TEAM = G9N53683T3;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = PullerLikeAtApple/Info.plist;
@@ -495,7 +495,7 @@
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 92;
+				CURRENT_PROJECT_VERSION = 93;
 				DEVELOPMENT_TEAM = G9N53683T3;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = PullerLikeAtApple/Info.plist;
