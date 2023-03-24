@@ -18,6 +18,8 @@ class SettingsViewController: UIViewController {
     @IBOutlet weak var keyboardExpandsSwitch: UISwitch!
     
     @IBOutlet weak var closingLockedBySwipeSwitch: UISwitch!
+    @IBOutlet weak var circleCloseButtonSwitch: UISwitch!
+
     @IBOutlet weak var whatShouldToDoWhenSelectedARowControl: UISegmentedControl!
     
     private lazy var grapiteColor = UIColor(hex: 0x11100C)
@@ -74,6 +76,8 @@ class SettingsViewController: UIViewController {
         keyboardExpandsSwitch.isOn = settings.keyboardExpands
         
         closingLockedBySwipeSwitch.isOn = settings.isClosingLockedBySwipe
+        
+        circleCloseButtonSwitch.isOn = settings.hasCircleCloseButton
     }
     
     @IBAction func pullerAnimatorChanged(_ sender: UISegmentedControl) {
@@ -149,6 +153,11 @@ class SettingsViewController: UIViewController {
     
     @IBAction func closingLockedBySwipeSwitchChanged(_ sender: UISwitch) {
         PresentationSettings.sharedInstance.isClosingLockedBySwipe = sender.isOn
+        updateSheet()
+    }
+
+    @IBAction func circleCloseButtonSwitchSwitchChanged(_ sender: UISwitch) {
+        PresentationSettings.sharedInstance.hasCircleCloseButton = sender.isOn
         updateSheet()
     }
 

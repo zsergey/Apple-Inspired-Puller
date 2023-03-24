@@ -53,11 +53,14 @@ class MainViewController: UIViewController {
         items += [
             .apple(name: "Medium, Large + Refresh Control", detents: [.medium, .large], hasRefreshControl: true),
         ]
+        if #available(iOS 14.0, *) {
+            items += [.apple(name: "Color Picker: Medium, Large", detents: [.medium, .large], picker: .color)]
+        }
         return items
     }
     
     private func makeSergeyItems() -> [Item] {
-        [
+        var items: [Item] = [
             .custom(name: "Small", detents: [.custom(0.25)]),
             .custom(name: "Medium", detents: [.medium]),
             .custom(name: "AirPods Pro", detents: [.medium], hasDynamicHeight: false),
@@ -69,6 +72,11 @@ class MainViewController: UIViewController {
             .custom(name: "Medium, Large + Refresh Control", detents: [.medium, .large], hasRefreshControl: true),
             .custom(name: "Medium, Full + Refresh Control", detents: [.medium, .full], hasRefreshControl: true)
         ]
+
+        if #available(iOS 14.0, *) {
+            items += [.custom(name: "Color Picker: Medium, Large", detents: [.medium, .full], picker: .color)]
+        }
+        return items
     }
     
     private func setupTableView() {
@@ -85,10 +93,7 @@ class MainViewController: UIViewController {
         tableView.dataSource = self
     }
     
-    func selectRowAt(_ indexPath: IndexPath) {
-        
-        let pullerItem = dataSource[indexPath.section].items[indexPath.row]
-        
+    private func makeSomeViewController(pullerItem: Item) -> SomeViewController {
         let someViewController = SomeViewController()
         someViewController.onSelectItem = { [weak self] viewController, item in
             self?.itemDidSelectInPuller(item, byApple: pullerItem.byApple, viewController: viewController)
@@ -101,7 +106,31 @@ class MainViewController: UIViewController {
         if !pullerItem.hasDynamicHeight {
             someViewController.addAirPodsPro()
         }
-        
+        return someViewController
+    }
+    
+    private func makeColorPicker() -> UIViewController? {
+        if #available(iOS 14.0, *) {
+            let colorPicker = UIColorPickerViewController()
+            colorPicker.title = "Background Color"
+            colorPicker.supportsAlpha = false
+            colorPicker.delegate = self
+            return colorPicker
+        }
+        return nil
+    }
+    
+    private func makeViewController(pullerItem: Item) -> UIViewController? {
+        switch pullerItem.picker {
+        case .none:
+            return makeSomeViewController(pullerItem: pullerItem)
+            
+        case .color, .photo:
+            return makeColorPicker()
+        }
+    }
+    
+    private func makePullerModel(pullerItem: Item) -> PullerModel {
         let presentationSettings = PresentationSettings.sharedInstance
         var pullerModel = presentationSettings.makePullerModel(detents: pullerItem.detents, hasDynamicHeight: pullerItem.hasDynamicHeight)
         pullerModel.onChangeDetent = { detent in
@@ -113,18 +142,27 @@ class MainViewController: UIViewController {
         pullerModel.onDidDismiss = {
             print("puller was closed")
         }
+        return pullerModel
+    }
+    
+    func selectRowAt(_ indexPath: IndexPath) {
+        
+        let pullerItem = dataSource[indexPath.section].items[indexPath.row]
+        
+        guard let viewController = makeViewController(pullerItem: pullerItem) else {
+            return
+        }
+        
+        let pullerModel = makePullerModel(pullerItem: pullerItem)
         
         if case .none = pullerModel.dragIndicator {
-            someViewController.addHeader()
+            (viewController as? SomeViewController)?.addHeader()
         }
         
         if #available(iOS 15.0, *), pullerItem.byApple {
-            
-            presentAsAppleSheet(someViewController, model: pullerModel)
-            
+            presentAsAppleSheet(viewController, model: pullerModel)
         } else {
-
-            presentAsPuller(someViewController, model: pullerModel)
+            presentAsPuller(viewController, model: pullerModel)
         }
     }
     
@@ -209,6 +247,10 @@ extension MainViewController: UITableViewDataSource {
     }
 }
 
+extension MainViewController: UIColorPickerViewControllerDelegate {
+    
+}
+
 extension MainViewController {
     
     struct Section {
@@ -217,32 +259,44 @@ extension MainViewController {
     }
     
     struct Item {
+        
+        enum Picker {
+            case none
+            case color
+            case photo
+        }
+        
         let name: String
         let byApple: Bool
         let detents: [PullerModel.Detent]
         let hasRefreshControl: Bool
         let hasDynamicHeight: Bool
+        let picker: Picker
         
         static func apple(name: String,
                           detents: [PullerModel.Detent],
                           hasRefreshControl: Bool = false,
-                          hasDynamicHeight: Bool = true) -> Item {
+                          hasDynamicHeight: Bool = true,
+                          picker: Picker = .none) -> Item {
             Item(name: name,
                  byApple: true,
                  detents: detents,
                  hasRefreshControl: hasRefreshControl,
-                 hasDynamicHeight: hasDynamicHeight)
+                 hasDynamicHeight: hasDynamicHeight,
+                 picker: picker)
         }
         
         static func custom(name: String,
                            detents: [PullerModel.Detent],
                            hasRefreshControl: Bool = false,
-                           hasDynamicHeight: Bool = true) -> Item {
+                           hasDynamicHeight: Bool = true,
+                           picker: Picker = .none) -> Item {
             Item(name: name,
                  byApple: false,
                  detents: detents,
                  hasRefreshControl: hasRefreshControl,
-                 hasDynamicHeight: hasDynamicHeight)
+                 hasDynamicHeight: hasDynamicHeight,
+                 picker: picker)
         }
     }
 }

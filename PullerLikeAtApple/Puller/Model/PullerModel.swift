@@ -43,6 +43,9 @@ struct PullerModel {
     /// Does a puller have dynamic height? Use `false` if you want to display a puller in the style of `AirPods Pro`.
     let hasDynamicHeight: Bool
 
+    /// Does a puller have the rounded close button?
+    let hasCircleCloseButton: Bool
+
     /// It calls when a puller moves to detents values.
     var onChangeDetent: ((Detent) -> Void)?
     
@@ -62,7 +65,8 @@ struct PullerModel {
          largestUndimmedDetent: Detent = .zero,
          decelerationRate: CGFloat = 0.99,
          dimmedAlpha: CGFloat = 0.4,
-         hasDynamicHeight: Bool = true) {
+         hasDynamicHeight: Bool = true,
+         hasCircleCloseButton: Bool = true) {
         self.detents = detents.map({ detent in
             if case .custom(let value) = detent, value == 0 {
                 return .custom(0.1)
@@ -80,6 +84,7 @@ struct PullerModel {
         self.decelerationRate = decelerationRate
         self.dimmedAlpha = dimmedAlpha
         self.hasDynamicHeight = hasDynamicHeight
+        self.hasCircleCloseButton = hasCircleCloseButton
     }
 }
 

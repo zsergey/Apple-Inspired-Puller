@@ -76,9 +76,11 @@ final class PullerPresentationController: UIPresentationController {
     
     private var dragIndicatorView: PullerDragIndicatorView?
     private let dragIndicatorSize = CGSize(width: 36.0, height: 5.0)
-    private let dragIndicatorFullTopOffset: CGFloat = UIApplication.shared.windows.first?.safeAreaInsets.top ?? 0
+    private let safeAreaTop: CGFloat = UIApplication.shared.windows.first?.safeAreaInsets.top ?? 0
     private var dragIndicatorInsideTopOffset: CGFloat { dragIndicatorSize.height }
     private var dragIndicatorOutsideTopOffset: CGFloat { -2 * dragIndicatorSize.height }
+    
+    private var closeButton: UIButton?
     
     // MARK: - Public methods
     
@@ -105,6 +107,9 @@ final class PullerPresentationController: UIPresentationController {
         updateAlpha()
         
         setupDragIndicatorView()
+        
+        setupCloseButton()
+        updateCloseButton()
     }
     
     deinit {
@@ -120,12 +125,14 @@ final class PullerPresentationController: UIPresentationController {
         setupDimmingView()
         setupScrollView()
         setupViews()
+        setupCloseButton()
         
         setupDragIndicatorView()
         setFirstDetentAsSelected()
         setStartPositionDragIndicatorView()
         
         updateDragIndicatorView()
+        updateCloseButton()
     }
     
     override func viewWillTransition(to size: CGSize,
@@ -224,7 +231,7 @@ final class PullerPresentationController: UIPresentationController {
         let isFullLastDetent = detents.last?.isFull == true
         let offset: CGFloat
         if isFullLastDetent {
-            offset = dragIndicatorFullTopOffset
+            offset = safeAreaTop
         } else if isInside {
             offset = dragIndicatorInsideTopOffset
         } else {
@@ -294,6 +301,7 @@ final class PullerPresentationController: UIPresentationController {
             self.updateCornerRadius()
             self.updateAlpha()
             self.updateDragIndicatorView()
+            self.updateCloseButton()
         }
         
         fromFrameObservation?.invalidate()
@@ -311,12 +319,36 @@ final class PullerPresentationController: UIPresentationController {
             self.updateCornerRadius()
             self.updateAlpha()
             self.updateDragIndicatorView()
+            self.updateCloseButton()
         }
         
         scrollViewObservation?.invalidate()
         scrollViewObservation = scrollView?.observe(\.contentOffset, options: .new) { [weak self] scrollView, change in
             self?.updateScrollView(scrollView, change: change)
         }
+    }
+    
+    private func setupCloseButton() {
+        guard model.hasCircleCloseButton else {
+            closeButton?.removeFromSuperview()
+            closeButton = nil
+            return
+        }
+        
+        if closeButton != nil {
+            return
+        }
+        
+        let button = UIButton(type: .custom)
+        let image = UIImage(named: "ic_nav_closedialogs_m")
+        button.setImage(image, for: .normal)
+        button.addTarget(self, action: #selector(closeButtonTapped), for: .touchUpInside)
+        toView.addSubview(button)
+        closeButton = button
+    }
+    
+    @objc private func closeButtonTapped() {
+        toViewController.dismiss(animated: true)
     }
     
     private func setupController() {
@@ -627,7 +659,7 @@ final class PullerPresentationController: UIPresentationController {
         if model.isClosingLockedBySwipe {
             return
         }
-        presentedViewController.dismiss(animated: true)
+        toViewController.dismiss(animated: true)
     }
     
     private func calcHeight(detent: PullerModel.Detent) -> CGFloat {
@@ -727,11 +759,36 @@ final class PullerPresentationController: UIPresentationController {
         }
         
         let maxOffset = isInside ? dragIndicatorInsideTopOffset : dragIndicatorOutsideTopOffset
-        let minOffset = dragIndicatorFullTopOffset
+        let minOffset = safeAreaTop
         let offset = calcValue(lastDetent: lastDetent, maxValue: maxOffset, minValue: minOffset)
         animateDragIndicator(offset: offset)
     }
     
+    private func updateCloseButton() {
+        
+        var topInset: CGFloat = model.hasDynamicHeight ? 12 : 20
+        let rightInset: CGFloat = topInset + 3
+        
+        guard let lastDetent = detents.last,
+              lastDetent.isFull else {
+            setCloseButtonInsets(topInset: topInset, rightInset: rightInset)
+            return
+        }
+
+        let maxInset = topInset
+        let minInset = safeAreaTop
+        topInset = calcValue(lastDetent: lastDetent, maxValue: maxInset, minValue: minInset)
+
+        setCloseButtonInsets(topInset: topInset, rightInset: rightInset)
+    }
+    
+    private func setCloseButtonInsets(topInset: CGFloat, rightInset: CGFloat) {
+        let size = CGSize(width: 32, height: 32)
+        let point = CGPoint(x: toView.frame.size.width - size.width - rightInset,
+                            y: topInset)
+        closeButton?.frame = CGRect(origin: point, size: size)
+    }
+
     private func animateDragIndicator(offset: CGFloat) {
         
         animateChanges { [weak self] in

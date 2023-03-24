@@ -191,21 +191,44 @@
                                             </stackView>
                                         </subviews>
                                     </stackView>
-                                    <stackView opaque="NO" contentMode="scaleToFill" axis="vertical" alignment="center" spacing="8" translatesAutoresizingMaskIntoConstraints="NO" id="ENE-8i-c9M">
-                                        <rect key="frame" x="89.000000000000014" y="421.66666666666663" width="199.33333333333337" height="59.333333333333314"/>
+                                    <stackView opaque="NO" contentMode="scaleToFill" spacing="25" translatesAutoresizingMaskIntoConstraints="NO" id="4DQ-J3-G2b">
+                                        <rect key="frame" x="5" y="421.66666666666663" width="367" height="59.333333333333314"/>
                                         <subviews>
-                                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Сlosing is locked by swipe" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" minimumScaleFactor="0.5" translatesAutoresizingMaskIntoConstraints="NO" id="gaV-In-kT8">
-                                                <rect key="frame" x="0.0" y="0.0" width="199.33333333333334" height="20.333333333333332"/>
-                                                <fontDescription key="fontDescription" type="system" pointSize="17"/>
-                                                <nil key="textColor"/>
-                                                <nil key="highlightedColor"/>
-                                            </label>
-                                            <switch opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" contentHorizontalAlignment="center" contentVerticalAlignment="center" translatesAutoresizingMaskIntoConstraints="NO" id="Zw0-3b-S4I">
-                                                <rect key="frame" x="75" y="28.333333333333371" width="51" height="31"/>
-                                                <connections>
-                                                    <action selector="closingLockedBySwipeSwitchChanged:" destination="PK2-Ei-2Pf" eventType="valueChanged" id="pTQ-uR-i27"/>
-                                                </connections>
-                                            </switch>
+                                            <stackView opaque="NO" contentMode="scaleToFill" axis="vertical" alignment="center" spacing="8" translatesAutoresizingMaskIntoConstraints="NO" id="ENE-8i-c9M">
+                                                <rect key="frame" x="0.0" y="0.0" width="199.33333333333334" height="59.333333333333336"/>
+                                                <subviews>
+                                                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Сlosing is locked by swipe" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" minimumScaleFactor="0.5" translatesAutoresizingMaskIntoConstraints="NO" id="gaV-In-kT8">
+                                                        <rect key="frame" x="0.0" y="0.0" width="199.33333333333334" height="20.333333333333332"/>
+                                                        <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                                                        <nil key="textColor"/>
+                                                        <nil key="highlightedColor"/>
+                                                    </label>
+                                                    <switch opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" contentHorizontalAlignment="center" contentVerticalAlignment="center" translatesAutoresizingMaskIntoConstraints="NO" id="Zw0-3b-S4I">
+                                                        <rect key="frame" x="75.333333333333329" y="28.333333333333371" width="51" height="31"/>
+                                                        <connections>
+                                                            <action selector="closingLockedBySwipeSwitchChanged:" destination="PK2-Ei-2Pf" eventType="valueChanged" id="pTQ-uR-i27"/>
+                                                        </connections>
+                                                    </switch>
+                                                </subviews>
+                                            </stackView>
+                                            <stackView opaque="NO" contentMode="scaleToFill" axis="vertical" alignment="center" spacing="8" translatesAutoresizingMaskIntoConstraints="NO" id="o4h-Bx-4eB">
+                                                <rect key="frame" x="224.33333333333337" y="0.0" width="142.66666666666663" height="59.333333333333336"/>
+                                                <subviews>
+                                                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Circle close button" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" minimumScaleFactor="0.5" translatesAutoresizingMaskIntoConstraints="NO" id="SGp-rQ-B0T">
+                                                        <rect key="frame" x="0.0" y="0.0" width="142.66666666666666" height="20.333333333333332"/>
+                                                        <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                                                        <nil key="textColor"/>
+                                                        <nil key="highlightedColor"/>
+                                                    </label>
+                                                    <switch opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" contentHorizontalAlignment="center" contentVerticalAlignment="center" translatesAutoresizingMaskIntoConstraints="NO" id="jYo-Oz-tp6">
+                                                        <rect key="frame" x="46.999999999999972" y="28.333333333333371" width="51" height="31"/>
+                                                        <connections>
+                                                            <action selector="circleCloseButtonSwitchSwitchChanged:" destination="PK2-Ei-2Pf" eventType="valueChanged" id="M7u-xR-Sbm"/>
+                                                            <action selector="closingLockedBySwipeSwitchChanged:" destination="PK2-Ei-2Pf" eventType="valueChanged" id="ABH-iu-ALu"/>
+                                                        </connections>
+                                                    </switch>
+                                                </subviews>
+                                            </stackView>
                                         </subviews>
                                     </stackView>
                                 </subviews>
@@ -220,6 +243,7 @@
                         </constraints>
                     </view>
                     <connections>
+                        <outlet property="circleCloseButtonSwitch" destination="jYo-Oz-tp6" id="TQG-08-mSn"/>
                         <outlet property="closingLockedBySwipeSwitch" destination="Zw0-3b-S4I" id="KTb-ej-gU6"/>
                         <outlet property="dragIndicatorControl" destination="Kin-c8-gfz" id="m2r-JA-yOd"/>
                         <outlet property="keyboardExpandsSwitch" destination="YOS-0t-MRt" id="8pg-Bz-pZi"/>

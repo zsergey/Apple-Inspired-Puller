@@ -19,6 +19,7 @@ class PresentationSettings {
     var keyboardExpands: Bool = true
     var isClosingLockedBySwipe: Bool = false
     var dismissWhenSelectedARow: Bool = false
+    var hasCircleCloseButton: Bool = true
     
     func makePullerModel(detents: [PullerModel.Detent]? = nil,
                          isSettings: Bool = false,
@@ -30,6 +31,7 @@ class PresentationSettings {
                     scrollingExpandsWhenScrolledToEdge: scrollingExpandsWhenScrolledToEdge,
                     keyboardExpands: keyboardExpands,
                     largestUndimmedDetent: largestUndimmedDetent,
-                    hasDynamicHeight: hasDynamicHeight)
+                    hasDynamicHeight: hasDynamicHeight,
+                    hasCircleCloseButton: hasCircleCloseButton)
     }
 }
