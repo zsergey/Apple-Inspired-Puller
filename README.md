@@ -1,4 +1,4 @@
-# 🥇 Puller like at 
+# 🥇 Apple-Inspired Puller
 
 > Apple has released a sheet presentation controller in iOS 15, which works great. In iOS 16, developers can customize the detents of the sheet. However, we would like to use these features in iOS 14 as well. That's why I have developed a puller presentation controller with the same API as Apple's. The puller works even in iOS 11. Please feel free to use the puller and give it a star if you find it useful.
 >
@@ -26,5 +26,5 @@ presentAsPuller(viewController, model: pullerModel)
 ```
 ### 🏝️ Example
 
-<img src="https://github.com/zsergey/Puller-like-at-Apple/blob/develop/example.gif" height="600" width="278">
+<img src="https://github.com/zsergey/apple-inspired-puller/blob/develop/example.gif" height="600" width="278">
 
