@@ -14,7 +14,7 @@ class PresentationSettings {
     var slowAnimations: Bool = false
     var dragIndicator: PullerModel.DragIndicator = .none
     var animator: PullerAnimator = .default
-    var largestUndimmedDetent: PullerModel.Detent = .custom(0.25)
+    var largestUndimmedDetent: PullerModel.Detent = .zero
     var scrollingExpandsWhenScrolledToEdge: Bool = true
     var keyboardExpands: Bool = true
     var isModalInPresentation: Bool = false

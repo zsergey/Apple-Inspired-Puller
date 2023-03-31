@@ -40,9 +40,10 @@ extension PullerTransitioningDelegate: UIViewControllerTransitioningDelegate {
                                 presenting: UIViewController?,
                                 source: UIViewController) -> UIPresentationController? {
         
-        PullerPresentationController(presentedViewController: presented,
-                                     presenting: presenting,
-                                     model: model)
-        
+        let pullerPresentationController = PullerPresentationController(presentedViewController: presented,
+                                                                        presenting: presenting,
+                                                                        model: model)
+        animationController.pullerPresentationController = pullerPresentationController
+        return pullerPresentationController
     }
 }

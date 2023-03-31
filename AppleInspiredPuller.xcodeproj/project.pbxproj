@@ -32,6 +32,7 @@
 		ADCD8036299BD2FD006713AA /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = ADCD8034299BD2FD006713AA /* Main.storyboard */; };
 		ADCD8038299BD2FE006713AA /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = ADCD8037299BD2FE006713AA /* Assets.xcassets */; };
 		ADCD803B299BD2FE006713AA /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = ADCD8039299BD2FE006713AA /* LaunchScreen.storyboard */; };
+		ADD0C9E129D5B06000472023 /* TextViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = ADD0C9E029D5B06000472023 /* TextViewController.swift */; };
 		ADD1CC12299F6A4D0029B536 /* UIViewControllerExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = ADD1CC11299F6A4D0029B536 /* UIViewControllerExtensions.swift */; };
 		ADD1CC14299F80B30029B536 /* CGPointExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = ADD1CC13299F80B30029B536 /* CGPointExtensions.swift */; };
 		ADD754A5299E6755005EC3BD /* PullerTransitioningDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = ADD754A4299E6755005EC3BD /* PullerTransitioningDelegate.swift */; };
@@ -70,6 +71,7 @@
 		ADCD8037299BD2FE006713AA /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		ADCD803A299BD2FE006713AA /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		ADCD803C299BD2FE006713AA /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		ADD0C9E029D5B06000472023 /* TextViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TextViewController.swift; sourceTree = "<group>"; };
 		ADD1CC11299F6A4D0029B536 /* UIViewControllerExtensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UIViewControllerExtensions.swift; sourceTree = "<group>"; };
 		ADD1CC13299F80B30029B536 /* CGPointExtensions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CGPointExtensions.swift; sourceTree = "<group>"; };
 		ADD754A4299E6755005EC3BD /* PullerTransitioningDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PullerTransitioningDelegate.swift; sourceTree = "<group>"; };
@@ -145,6 +147,7 @@
 				ADCC4B5629CB340400527E3C /* Extensions */,
 				ADCC4B5529CB340400527E3C /* MainViewController.swift */,
 				ADCC4B5929CB340400527E3C /* SomeViewController.swift */,
+				ADD0C9E029D5B06000472023 /* TextViewController.swift */,
 				ADCC4B5A29CB340400527E3C /* PresentationSettings.swift */,
 				ADCC4B5F29CB340400527E3C /* SettingsViewController.swift */,
 			);
@@ -304,6 +307,7 @@
 				ADCC4B4629CB310800527E3C /* PullerShadowView.swift in Sources */,
 				AD67DCBC29B9B2D30045354C /* UIScrollViewExtensions.swift in Sources */,
 				AD30F2F429CB4C4E0056BB40 /* UISegmentedControlExtensions.swift in Sources */,
+				ADD0C9E129D5B06000472023 /* TextViewController.swift in Sources */,
 				AD08E66C29CC1ACA00581DBA /* PullerPresentationController.swift in Sources */,
 				ADCC4B6529CB340400527E3C /* main.m in Sources */,
 				ADB508A129BB6EB400673FAA /* CATransactionExtensions.swift in Sources */,
@@ -463,7 +467,7 @@
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 94;
+				CURRENT_PROJECT_VERSION = 96;
 				DEVELOPMENT_TEAM = G9N53683T3;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = AppleInspiredPuller/Info.plist;
@@ -472,7 +476,7 @@
 				INFOPLIST_KEY_UIMainStoryboardFile = Main;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
-				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 12.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -495,7 +499,7 @@
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 94;
+				CURRENT_PROJECT_VERSION = 96;
 				DEVELOPMENT_TEAM = G9N53683T3;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = AppleInspiredPuller/Info.plist;
@@ -504,7 +508,7 @@
 				INFOPLIST_KEY_UIMainStoryboardFile = Main;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
-				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 12.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",

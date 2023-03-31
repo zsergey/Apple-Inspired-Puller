@@ -66,6 +66,8 @@ class SettingsViewController: UIViewController {
             selectedSegmentIndex = 3
         case .full:
             selectedSegmentIndex = 4
+        default:
+            selectedSegmentIndex = 0
         }
         largestUndimmedDetentControl.selectedSegmentIndex = selectedSegmentIndex
         

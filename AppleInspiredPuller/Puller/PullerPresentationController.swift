@@ -98,6 +98,11 @@ final class PullerPresentationController: UIPresentationController {
         setupKeyboard()
     }
     
+    func apply(detents: [PullerModel.Detent]) {
+        self.model.detents = detents
+        apply(model: model)
+    }
+
     func apply(model: PullerModel) {
         self.model = model
         

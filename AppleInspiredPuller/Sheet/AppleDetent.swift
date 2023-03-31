@@ -14,7 +14,7 @@ extension PullerModel.Detent {
         switch self {
         case .medium:
             return .medium()
-        case .large, .full:
+        case .large, .full, .fitsContent:
             return .large()
         case .custom(let value):
             if #available(iOS 16.0, *) {

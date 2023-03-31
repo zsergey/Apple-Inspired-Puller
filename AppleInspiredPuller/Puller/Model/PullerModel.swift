@@ -14,7 +14,7 @@ struct PullerModel {
     let animator: PullerAnimator
     
     /// Positions of a puller where it can chill
-    let detents: [Detent]
+    var detents: [Detent]
 
     /// Corner radius of a puller
     let cornerRadius: CGFloat
@@ -67,13 +67,7 @@ struct PullerModel {
          dimmedAlpha: CGFloat = 0.4,
          hasDynamicHeight: Bool = true,
          hasCircleCloseButton: Bool = true) {
-        self.detents = detents.map({ detent in
-            if case .custom(let value) = detent, value == 0 {
-                return .custom(0.1)
-            } else {
-                return detent
-            }
-        }).sorted(by: <)
+        self.detents = (detents.filter { $0.value != 0 }.count == 0 ? [.fitsContent] : detents.filter { $0.value != 0 }).sorted(by: <)
         self.animator = animator
         self.cornerRadius = cornerRadius
         self.dragIndicator = dragIndicator
@@ -95,15 +89,24 @@ extension PullerModel {
         case medium
         case large
         case full
-        
-        var isFull: Bool { value == 1.0 }
-        
+        case fitsContent
+
         var value: CGFloat {
             switch self {
             case .custom(let value): return min(max(value, 0), 1)
             case .medium: return 0.5
             case .large: return 0.92
             case .full: return 1
+            case .fitsContent: return 1
+            }
+        }
+        
+        var isFull: Bool { value == 1.0 }
+
+        var isFitContent: Bool {
+            switch self {
+            case .fitsContent: return true
+            default: return false
             }
         }
         

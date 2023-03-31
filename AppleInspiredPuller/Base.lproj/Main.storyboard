@@ -12,7 +12,7 @@
         <!--Apple-Inspired Puller-->
         <scene sceneID="tne-QT-ifu">
             <objects>
-                <viewController id="BYZ-38-t0r" customClass="MainViewController" customModule="PullerLikeAt_" customModuleProvider="target" sceneMemberID="viewController">
+                <viewController id="BYZ-38-t0r" customClass="MainViewController" customModule="AppleInspiredPuller" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" contentMode="scaleToFill" id="8bC-Xf-vdC">
                         <rect key="frame" x="0.0" y="0.0" width="393" height="852"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
@@ -34,7 +34,7 @@
         <!--Settings View Controller-->
         <scene sceneID="Dal-e8-AMX">
             <objects>
-                <viewController storyboardIdentifier="settings" id="PK2-Ei-2Pf" customClass="SettingsViewController" customModule="PullerLikeAt_" customModuleProvider="target" sceneMemberID="viewController">
+                <viewController storyboardIdentifier="settings" id="PK2-Ei-2Pf" customClass="SettingsViewController" customModule="AppleInspiredPuller" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" contentMode="scaleToFill" id="wWo-3z-5dB">
                         <rect key="frame" x="0.0" y="0.0" width="393" height="852"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>

@@ -11,8 +11,13 @@ final class PullerAnimationController: NSObject {
     
     var isPresenting: Bool
     
+    /// `PullerAnimationController` can adjust detents for `PullerPresentationController` when it encounters the `.fitsContent` value in detents array of `PullerModel`.
+    weak var pullerPresentationController: PullerPresentationController?
+    
     private let model: PullerModel
     private weak var viewController: UIViewController?
+    private let screenHeight = UIScreen.main.bounds.height
+    private let safeAreaBottomInset: CGFloat = UIApplication.shared.windows.filter { $0.isKeyWindow }.first?.safeAreaInsets.bottom ?? 0
     
     init(model: PullerModel,
          viewController: UIViewController?,
@@ -30,14 +35,15 @@ final class PullerAnimationController: NSObject {
         toViewController.view.frame.origin.y = UIScreen.main.bounds.maxY
 
         model.animator.animate { [weak self] in
-            guard let model = self?.model else {
+            guard let self = self else {
                 return
             }
             
-            let height = UIScreen.main.bounds.height
-            toViewController.view.frame.origin.y = height - height * detent.value
-
-            if model.isModalInPresentation {
+            let adjustedDetent = self.adjustDetent(detent, toViewController: toViewController)
+            let viewHeight = self.screenHeight * adjustedDetent.value
+            toViewController.view.frame.origin.y = self.screenHeight - viewHeight
+            
+            if self.model.isModalInPresentation {
                 UIImpactFeedbackGenerator(style: .light).impactOccurred()
             }
 
@@ -95,6 +101,35 @@ final class PullerAnimationController: NSObject {
 
             self?.model.onDidDismiss?()
         }
+    }
+    
+    private func adjustDetent(_ detent: PullerModel.Detent, toViewController: UIViewController) -> PullerModel.Detent {
+        
+        let largeHeight = screenHeight * PullerModel.Detent.large.value
+        let defaultHeight = toViewController.view.intrinsicContentSize.height
+        let hasDefaultHeight = defaultHeight != UIView.noIntrinsicMetric
+        
+        if detent.isFitContent && hasDefaultHeight {
+            
+            var viewHeight = defaultHeight + safeAreaBottomInset
+            viewHeight = min(viewHeight, screenHeight)
+            if viewHeight > largeHeight, viewHeight < screenHeight {
+                viewHeight = largeHeight
+            }
+
+            let detentValue = viewHeight / screenHeight
+            pullerPresentationController?.apply(detents: [.custom(detentValue)])
+            
+            return .custom(detentValue)
+            
+        } else if detent.isFitContent {
+            
+            pullerPresentationController?.apply(detents: [.large])
+            
+            return .large
+        }
+        
+        return detent
     }
 }
 

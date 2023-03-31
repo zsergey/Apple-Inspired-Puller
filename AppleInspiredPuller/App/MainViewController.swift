@@ -12,7 +12,7 @@ class MainViewController: UIViewController {
     lazy var tableView = UITableView()
     
     private var dataSource: [Section] = []
-    
+        
     override func viewDidLoad() {
 
         super.viewDidLoad()
@@ -54,7 +54,7 @@ class MainViewController: UIViewController {
             .apple(name: "Medium, Large + Refresh Control", detents: [.medium, .large], hasRefreshControl: true),
         ]
         if #available(iOS 14.0, *) {
-            items += [.apple(name: "Color Picker: Medium, Large", detents: [.medium, .large], picker: .color)]
+            items += [.apple(name: "Color Picker: Medium, Large", detents: [.medium, .large], type: .color)]
         }
         return items
     }
@@ -74,8 +74,11 @@ class MainViewController: UIViewController {
         ]
 
         if #available(iOS 14.0, *) {
-            items += [.custom(name: "Color Picker: Medium, Large", detents: [.medium, .full], picker: .color)]
+            items += [.custom(name: "Color Picker doesn't work cause UIRemoteView", detents: [.medium, .full], type: .color)]
         }
+        
+        items += [.custom(name: "Fits content (random text)", detents: [.fitsContent], type: .text)]
+
         return items
     }
     
@@ -119,14 +122,15 @@ class MainViewController: UIViewController {
         }
         return nil
     }
-    
+        
     private func makeViewController(pullerItem: Item) -> UIViewController? {
-        switch pullerItem.picker {
-        case .none:
+        switch pullerItem.type {
+        case .some:
             return makeSomeViewController(pullerItem: pullerItem)
-            
-        case .color, .photo:
+        case .color:
             return makeColorPicker()
+        case .text:
+            return TextViewController()
         }
     }
     
@@ -260,10 +264,10 @@ extension MainViewController {
     
     struct Item {
         
-        enum Picker {
-            case none
+        enum TypeViewController {
+            case some
             case color
-            case photo
+            case text
         }
         
         let name: String
@@ -271,32 +275,32 @@ extension MainViewController {
         let detents: [PullerModel.Detent]
         let hasRefreshControl: Bool
         let hasDynamicHeight: Bool
-        let picker: Picker
+        let type: TypeViewController
         
         static func apple(name: String,
                           detents: [PullerModel.Detent],
                           hasRefreshControl: Bool = false,
                           hasDynamicHeight: Bool = true,
-                          picker: Picker = .none) -> Item {
+                          type: TypeViewController = .some) -> Item {
             Item(name: name,
                  byApple: true,
                  detents: detents,
                  hasRefreshControl: hasRefreshControl,
                  hasDynamicHeight: hasDynamicHeight,
-                 picker: picker)
+                 type: type)
         }
         
         static func custom(name: String,
                            detents: [PullerModel.Detent],
                            hasRefreshControl: Bool = false,
                            hasDynamicHeight: Bool = true,
-                           picker: Picker = .none) -> Item {
+                           type: TypeViewController = .some) -> Item {
             Item(name: name,
                  byApple: false,
                  detents: detents,
                  hasRefreshControl: hasRefreshControl,
                  hasDynamicHeight: hasDynamicHeight,
-                 picker: picker)
+                 type: type)
         }
     }
 }
