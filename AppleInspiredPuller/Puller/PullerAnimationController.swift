@@ -10,13 +10,15 @@ import UIKit
 final class PullerAnimationController: NSObject {
     
     var isPresenting: Bool
+    var pullerMovement: PullerModel.Movement = .vertical
     
     /// `PullerAnimationController` can adjust detents for `PullerPresentationController` when it encounters the `.fitsContent` value in detents array of `PullerModel`.
     weak var pullerPresentationController: PullerPresentationController?
     
     private let model: PullerModel
     private weak var viewController: UIViewController?
-    private let screenHeight = UIScreen.main.bounds.height
+    private var screenWidth: CGFloat { UIScreen.main.bounds.width }
+    private var screenHeight: CGFloat { UIScreen.main.bounds.height }
     private let safeAreaBottomInset: CGFloat = UIApplication.shared.windows.filter { $0.isKeyWindow }.first?.safeAreaInsets.bottom ?? 0
     
     init(model: PullerModel,
@@ -79,27 +81,31 @@ final class PullerAnimationController: NSObject {
         }
         
         model.onWillDismiss?()
-
-        model.animator.animate {
-            
-            let value = UIScreen.main.bounds.maxY
-            fromViewController.view.frame.origin.y = value
-            shadowView?.frame.origin.y = value
+        
+        model.animator.animate { [weak self] in
+            guard let self = self else {
+                return
+            }
+            if self.pullerMovement == .horizontal {
+                fromViewController.view.frame.origin.x = self.screenWidth
+            } else {
+                let value = UIScreen.main.bounds.maxY
+                fromViewController.view.frame.origin.y = value
+                shadowView?.frame.origin.y = value
+            }
             
             if hasOutsideDragIndicator {
                 dragIndicatorView?.alpha = 0
             }
-            
         } completion: { [weak self] _ in
-            
             toViewController.view.layer.setCornerRadius(0)
             fromViewController.endAppearanceTransition()
             toViewController.endAppearanceTransition()
             transitionContext.completeTransition(!transitionContext.transitionWasCancelled)
             
-            self?.viewController?.pullerTransitioningDelegate = nil
-
             self?.model.onDidDismiss?()
+            
+            self?.viewController?.pullerTransitioningDelegate = nil
         }
     }
     

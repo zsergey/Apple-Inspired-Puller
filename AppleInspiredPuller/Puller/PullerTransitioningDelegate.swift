@@ -44,6 +44,7 @@ extension PullerTransitioningDelegate: UIViewControllerTransitioningDelegate {
                                                                         presenting: presenting,
                                                                         model: model)
         animationController.pullerPresentationController = pullerPresentationController
+        pullerPresentationController.animationController = animationController
         return pullerPresentationController
     }
 }

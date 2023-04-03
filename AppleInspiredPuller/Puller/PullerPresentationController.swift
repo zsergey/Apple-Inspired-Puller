@@ -16,6 +16,9 @@ final class PullerPresentationController: UIPresentationController {
         get { internalSelectedDetent }
     }
     
+    /// `PullerPresentationController` can modify the dismissal direction for `PullerAnimationController`.
+    weak var animationController: PullerAnimationController?
+    
     // MARK: - Private types
     
     private enum PanGestureSource {
@@ -32,7 +35,8 @@ final class PullerPresentationController: UIPresentationController {
     // MARK: - Private properties
     
     private var model: PullerModel
-
+    
+    private var panGestureRecognizer: UIPanGestureRecognizer?
     private var dimmingView: PullerDimmingView?
     private lazy var shadowView: PullerShadowView = { PullerShadowView() }()
     private var shadow: Shadow = .default
@@ -41,6 +45,7 @@ final class PullerPresentationController: UIPresentationController {
     private var toView: UIView { presentedViewController.view }
     private var toViewController: UIViewController { presentedViewController }
     private var isPhone: Bool { UIDevice.current.userInterfaceIdiom == .phone }
+    private var isDialog: Bool { !model.hasDynamicHeight }
     
     private let keyboard = Keyboard()
     private var isKeyboardVisible: Bool = false
@@ -72,6 +77,12 @@ final class PullerPresentationController: UIPresentationController {
     
     private var hasRefreshControl: Bool = false
     private var isRotatingDevice: Bool = false
+    private var isRunningHorizontalAnimation: Bool = false
+    private var isRunningVerticalAnimation: Bool = false
+    private var isValidGesture: Bool = true
+    private var pullerMovement: PullerModel.Movement = .vertical
+    private var isHorizontal: Bool { pullerMovement == .horizontal }
+    private var isInternalDismissing: Bool = false
     private var panGestureSource: PanGestureSource = .view
     private var scrollDirection: ScrollDirection = .stop
     
@@ -110,7 +121,7 @@ final class PullerPresentationController: UIPresentationController {
         
         update3DScale()
         updateCornerRadius()
-        updateAlpha()
+        updateDimmingView()
         
         setupDragIndicatorView()
         
@@ -123,6 +134,14 @@ final class PullerPresentationController: UIPresentationController {
         keyboard.unsubscribeFromNotifications()
         
         invalidateObservers()
+    }
+    
+    override func dismissalTransitionWillBegin() {
+        super.dismissalTransitionWillBegin()
+        
+        if !isInternalDismissing {
+            pullerMovement = .vertical
+        }
     }
     
     override func presentationTransitionWillBegin() {
@@ -287,8 +306,10 @@ final class PullerPresentationController: UIPresentationController {
         }
         containerView?.addSubview(toView)
 
-        toView.addGestureRecognizer(makePanGestureRecognizer())
+        let panGestureRecognizer = makePanGestureRecognizer()
+        toView.addGestureRecognizer(panGestureRecognizer)
         toViewController.pullerPresentationController = self
+        self.panGestureRecognizer = panGestureRecognizer
         
         if model.hasDynamicHeight {
             toView.layer.maskedCorners = [.layerMinXMinYCorner, .layerMaxXMinYCorner]
@@ -296,7 +317,8 @@ final class PullerPresentationController: UIPresentationController {
             toView.layer.maskedCorners = [.layerMinXMinYCorner, .layerMaxXMinYCorner,
                                           .layerMinXMaxYCorner, .layerMaxXMaxYCorner]
         }
-        fromView.layer.maskedCorners = [.layerMinXMinYCorner, .layerMaxXMinYCorner]
+        fromView.layer.maskedCorners = [.layerMinXMinYCorner, .layerMaxXMinYCorner,
+                                        .layerMinXMaxYCorner, .layerMaxXMaxYCorner]
         
         toView.autoresizingMask = [.flexibleTopMargin, .flexibleLeftMargin, .flexibleRightMargin]
         
@@ -308,7 +330,7 @@ final class PullerPresentationController: UIPresentationController {
             self.syncShadowView()
             self.update3DScale()
             self.updateCornerRadius()
-            self.updateAlpha()
+            self.updateDimmingView()
             self.updateDragIndicatorView()
             self.updateCloseButton()
         }
@@ -326,7 +348,7 @@ final class PullerPresentationController: UIPresentationController {
             self.syncShadowView()
             self.update3DScale()
             self.updateCornerRadius()
-            self.updateAlpha()
+            self.updateDimmingView()
             self.updateDragIndicatorView()
             self.updateCloseButton()
         }
@@ -357,7 +379,7 @@ final class PullerPresentationController: UIPresentationController {
     }
     
     @objc private func closeButtonTapped() {
-        toViewController.dismiss(animated: true)
+        dismissToViewControllerVertically()
     }
     
     private func setupController() {
@@ -369,18 +391,18 @@ final class PullerPresentationController: UIPresentationController {
     }
     
     private func makePanGestureRecognizer() -> UIPanGestureRecognizer {
-        let panGestureRecognizer = UIPanGestureRecognizer(target: self, action: #selector(handlePanGestureRecognizer(panGestureRecognizer:)))
-        panGestureRecognizer.minimumNumberOfTouches = 1
-        panGestureRecognizer.maximumNumberOfTouches = 1
-        panGestureRecognizer.delegate = self
-        return panGestureRecognizer
+        let panGesture = UIPanGestureRecognizer(target: self, action: #selector(handlePanGesture(_:)))
+        panGesture.minimumNumberOfTouches = 1
+        panGesture.maximumNumberOfTouches = 1
+        panGesture.delegate = self
+        return panGesture
     }
     
     private func makeDimmingView() -> PullerDimmingView {
         let view = PullerDimmingView()
         view.viewToTranslateGesture = fromView
         view.onDidTap = { [weak self] in
-            self?.dismissPresentedViewController()
+            self?.dimmingViewTapped()
         }
         return view
     }
@@ -487,38 +509,97 @@ final class PullerPresentationController: UIPresentationController {
         return Int(toView.frame.minY) <= Int(calcPosition(detent: lastDetent))
     }
     
-    @objc private func handlePanGestureRecognizer(panGestureRecognizer: UIPanGestureRecognizer) {
+    @objc private func handlePanGesture(_ gesture: UIPanGestureRecognizer) {
+                    
+        let touchPoint = gesture.location(in: toView)
         
-        let touchPoint = panGestureRecognizer.location(in: toView)
-        
-        switch panGestureRecognizer.state {
-        case .began:
-             
-            handleBeginStateOfPanGestureRecognizer(at: touchPoint)
+        if gesture.state == .began {
+            handleBeginGesture(gesture, at: touchPoint)
+            return
+        }
             
+        guard isValidGesture else {
+            return
+        }
+        
+        switch gesture.state {
         case .changed:
-            
-            handleChangedStateOfPanGestureRecognizer(panGestureRecognizer, at: touchPoint)
-            
+            isHorizontal ? handleHorizontalGesture(gesture, at: touchPoint) :
+                           handleVerticalGesture(gesture, at: touchPoint)
         case .ended, .cancelled:
-            
-            handleEndedStateOfPanGestureRecognizer(panGestureRecognizer)
-            
+            isHorizontal ? handleEndHorizontalGesture(gesture) :
+                           handleEndVerticalGesture(gesture)
         default: break
         }
     }
 
-    private func handleBeginStateOfPanGestureRecognizer(at touchPoint: CGPoint) {
+    private func handleBeginGesture(_ gesture: UIPanGestureRecognizer, at touchPoint: CGPoint) {
         if panGestureSource == .view {
             needsScrollingPuller = true
         }
         
         startedTouchPoint = touchPoint
         startedTouchDetent = nearestDetent(to: toView.frame.origin.y)
+
+        guard isPhone && model.hasDynamicHeight else {
+            return
+        }
+        
+        let velocity = gesture.velocity(in: toView)
+        let isHorizontal = abs(velocity.x) > abs(velocity.y)
+        
+        if (isRunningHorizontalAnimation && !isHorizontal) ||
+            (isRunningVerticalAnimation && isHorizontal) {
+            isValidGesture = false
+        } else {
+            isValidGesture = true
+            pullerMovement = isHorizontal ? .horizontal : .vertical
+        }
     }
-    
-    private func handleChangedStateOfPanGestureRecognizer(_ panGestureRecognizer: UIPanGestureRecognizer,
-                                                          at touchPoint: CGPoint) {
+
+    private func handleHorizontalGesture(_ gesture: UIPanGestureRecognizer,
+                                         at touchPoint: CGPoint) {
+        let translation = gesture.translation(in: toView)
+        
+        guard translation.x >= 0 else {
+            return
+        }
+        
+        CATransaction.disableAnimations {
+            toView.transform = CGAffineTransform(translationX: translation.x, y: 0)
+        }
+    }
+
+    private func handleEndHorizontalGesture(_ gesture: UIPanGestureRecognizer) {
+        
+        let velocity = gesture.velocity(in: toView)
+        let distance = distanceRest(initialVelocity: velocity.x,
+                                    decelerationRate: model.decelerationRate)
+        let xRest = toView.frame.origin.x + distance
+        
+        let x = xRest > screenWidth / 2 ? screenWidth : 0
+        let isGoingToDismiss = x == screenWidth
+        
+        if isGoingToDismiss {
+            dismissToViewControllerHorizontally()
+            return
+        }
+        
+        isRunningHorizontalAnimation = true
+        model.animator.animate { [weak self] in
+            guard let self = self else {
+                return
+            }
+            self.toView.transform = .identity
+            self.toView.frame.origin.x = x
+            self.layoutPullerIfNeeded()
+        } completion: { [weak self] _ in
+            self?.isRunningHorizontalAnimation = false
+        }
+    }
+
+    private func handleVerticalGesture(_ gesture: UIPanGestureRecognizer,
+                                       at touchPoint: CGPoint) {
         
         guard let firstDetent = detents.first,
               let lastDetent = detents.last else {
@@ -528,11 +609,11 @@ final class PullerPresentationController: UIPresentationController {
         guard needsScrollingPuller else {
             startedTouchPoint = touchPoint
             startedTouchDetent = nearestDetent(to: toView.frame.origin.y)
-            panGestureRecognizer.setTranslation(.zero, in: toView)
+            gesture.setTranslation(.zero, in: toView)
             return
         }
         
-        let translation = panGestureRecognizer.translation(in: toView)
+        let translation = gesture.translation(in: toView)
         let changedY = calcPosition(detent: startedTouchDetent) + translation.y
         
         let isCrossingFirstDetent = changedY > calcPosition(detent: firstDetent)
@@ -556,7 +637,7 @@ final class PullerPresentationController: UIPresentationController {
                 toView.transform = .identity
                 toView.frame.origin.y = calcPosition(detent: closestDetent)
             }
-            panGestureRecognizer.setTranslation(.zero, in: toView)
+            gesture.setTranslation(.zero, in: toView)
             return
         }
         
@@ -579,12 +660,12 @@ final class PullerPresentationController: UIPresentationController {
         }
     }
     
-    private func handleEndedStateOfPanGestureRecognizer(_ panGestureRecognizer: UIPanGestureRecognizer) {
+    private func handleEndVerticalGesture(_ gesture: UIPanGestureRecognizer) {
         guard needsScrollingPuller else {
             return
         }
         
-        let velocity = panGestureRecognizer.velocity(in: toView)
+        let velocity = gesture.velocity(in: toView)
         let distance = distanceRest(initialVelocity: velocity.y,
                                     decelerationRate: model.decelerationRate)
         let yRest = toView.frame.origin.y + distance
@@ -597,13 +678,13 @@ final class PullerPresentationController: UIPresentationController {
         
         let isGoingToDismiss = closestDetent == .zero
         if !model.isModalInPresentation && isGoingToDismiss {
-            toViewController.dismiss(animated: true)
+            dismissToViewControllerVertically()
             return
         }
         
         let isChangedDetent = selectedDetent != closestDetent
-        
-        self.model.animator.animate { [weak self] in
+        isRunningVerticalAnimation = true
+        model.animator.animate { [weak self] in
             guard let self = self else {
                 return
             }
@@ -612,9 +693,10 @@ final class PullerPresentationController: UIPresentationController {
                 self.previousDetent = closestDetent
             }
             self.layoutPullerIfNeeded()
-        } completion: { _ in
+        } completion: { [weak self] _ in
+            self?.isRunningVerticalAnimation = false
             if isChangedDetent {
-                self.model.onChangeDetent?(closestDetent)
+                self?.model.onChangeDetent?(closestDetent)
             }
         }
     }
@@ -663,14 +745,30 @@ final class PullerPresentationController: UIPresentationController {
                                               y: screenHeight - height),
                               size: CGSize(width: body.width, height: height - body.inset))
     }
-
-    @objc private func dismissPresentedViewController() {
+    
+    @objc private func dimmingViewTapped() {
         if model.isModalInPresentation {
             return
         }
-        toViewController.dismiss(animated: true)
+        dismissToViewControllerVertically()
     }
     
+    private func dismissToViewControllerVertically() {
+        if isRunningHorizontalAnimation {
+            return
+        }
+        isInternalDismissing = true
+        pullerMovement = .vertical
+        animationController?.pullerMovement = .vertical
+        toViewController.dismiss(animated: true)
+    }
+
+    private func dismissToViewControllerHorizontally() {
+        isInternalDismissing = true
+        animationController?.pullerMovement = .horizontal
+        toViewController.dismiss(animated: true)
+    }
+
     private func calcHeight(detent: PullerModel.Detent) -> CGFloat {
         screenHeight * detent.value
     }
@@ -679,16 +777,28 @@ final class PullerPresentationController: UIPresentationController {
         screenHeight * (1.0 - detent.value)
     }
 
-    private func updateAlpha() {
-        let currentY = max(toView.frame.origin.y, calcPosition(detent: dimmedDetent))
-        
-        let maxHeight = max(calcPosition(detent: model.largestUndimmedDetent) - calcPosition(detent: dimmedDetent), 0)
-        let currentHeight = max(calcPosition(detent: model.largestUndimmedDetent) - currentY, 0)
-        var alpha: CGFloat = 0.0
-        if maxHeight != 0 {
-            alpha = model.dimmedAlpha * currentHeight / maxHeight
+    private func updateDimmingView() {
+
+        if isHorizontal {
+
+            let currentX = toView.frame.origin.x
+            var alpha = model.dimmedAlpha * (screenWidth - currentX) / screenWidth
+            let largestUndimmedDetentY = calcPosition(detent: model.largestUndimmedDetent)
+            alpha = toView.frame.origin.y < largestUndimmedDetentY ? alpha : 0.0
+            dimmingView?.alpha = alpha
+            
+        } else {
+            
+            let currentY = max(toView.frame.origin.y, calcPosition(detent: dimmedDetent))
+            
+            let maxHeight = max(calcPosition(detent: model.largestUndimmedDetent) - calcPosition(detent: dimmedDetent), 0)
+            let currentHeight = max(calcPosition(detent: model.largestUndimmedDetent) - currentY, 0)
+            var alpha: CGFloat = 0.0
+            if maxHeight != 0 {
+                alpha = model.dimmedAlpha * currentHeight / maxHeight
+            }
+            dimmingView?.alpha = alpha
         }
-        dimmingView?.alpha = alpha
     }
     
     private func calcValue(lastDetent: PullerModel.Detent, maxValue: CGFloat, minValue: CGFloat) -> CGFloat {
@@ -722,46 +832,78 @@ final class PullerPresentationController: UIPresentationController {
         
         let maxScale: CGFloat = 1.0
         let minScale: CGFloat = 0.88
-        let scale = calcValue(lastDetent: lastDetent, maxValue: maxScale, minValue: minScale)
-        
+        let scale: CGFloat
+
+        if isHorizontal {
+            scale = selectedDetent.isExpanded ? toView.frame.origin.x * (maxScale - minScale) / screenWidth + minScale : maxScale
+        } else {
+            scale = calcValue(lastDetent: lastDetent, maxValue: maxScale, minValue: minScale)
+        }
+
         fromView.layer.transform = CATransform3DMakeScale(scale, scale, maxScale)
     }
         
     private func updateCornerRadius() {
-        if !model.hasDynamicHeight {
-            var radius = UIScreen.main.displayCornerRadius
-            radius = radius > 0 ? radius: model.cornerRadius
-            toView.layer.setCornerRadius(radius).adjustMasksToBounds()
-            shadowView.layer.setCornerRadius(radius)
+        
+        if isDialog {
+            setDisplayCornerRadius()
             return
         }
         
-        guard let lastDetent = detents.last,
+        guard let panGestureRecognizer = panGestureRecognizer,
+              let lastDetent = detents.last,
               lastDetent.isExpanded else {
-            
-            toView.layer.setCornerRadius(model.cornerRadius).adjustMasksToBounds()
-            shadowView.layer.setCornerRadius(model.cornerRadius)
+            setDefaultCornerRadius()
             return
         }
         
+        setFlexibleCornerRadiuses(panGestureRecognizer: panGestureRecognizer,
+                                  lastDetent: lastDetent)
+    }
+    
+    private func setFlexibleCornerRadiuses(panGestureRecognizer: UIPanGestureRecognizer,
+                                           lastDetent: PullerModel.Detent) {
         let maxRadius: CGFloat = model.cornerRadius
         let minRadius: CGFloat = UIScreen.main.displayCornerRadius
-        let toRadius = calcValue(lastDetent: lastDetent, maxValue: maxRadius, minValue: minRadius)
+        var toRadius: CGFloat
         
-        let fromRadius = maxRadius + minRadius - toRadius
+        if isHorizontal {
+            toRadius = toView.frame.origin.x * (maxRadius - minRadius) / screenWidth + minRadius
+        } else {
+            toRadius = calcValue(lastDetent: lastDetent, maxValue: maxRadius, minValue: minRadius)
+        }
         
-        let radius = fromViewController.presentingViewController == nil ? fromRadius:  model.cornerRadius
-        fromView.layer.setCornerRadius(radius).adjustMasksToBounds()
-
+        var fromRadius = maxRadius + minRadius - toRadius
+        fromRadius = fromViewController.presentingViewController == nil ? fromRadius: model.cornerRadius
+        if isHorizontal {
+            fromRadius = selectedDetent.isExpanded ? fromRadius : minRadius
+        }
+        fromView.layer.setCornerRadius(fromRadius).adjustMasksToBounds()
+        
+        if isHorizontal {
+            toRadius = selectedDetent.isFull ? minRadius : maxRadius
+        }
+        
         if lastDetent.isFull && isPhone && screenWidth < screenHeight {
             toView.layer.setCornerRadius(toRadius).adjustMasksToBounds()
             shadowView.layer.setCornerRadius(toRadius)
         } else {
-            toView.layer.setCornerRadius(model.cornerRadius).adjustMasksToBounds()
-            shadowView.layer.setCornerRadius(model.cornerRadius)
+            setDefaultCornerRadius()
         }
     }
     
+    private func setDisplayCornerRadius() {
+        var radius = UIScreen.main.displayCornerRadius
+        radius = radius > 0 ? radius: model.cornerRadius
+        toView.layer.setCornerRadius(radius).adjustMasksToBounds()
+        shadowView.layer.setCornerRadius(radius)
+    }
+
+    private func setDefaultCornerRadius() {
+        toView.layer.setCornerRadius(model.cornerRadius).adjustMasksToBounds()
+        shadowView.layer.setCornerRadius(model.cornerRadius)
+    }
+
     private func updateDragIndicatorView() {
         guard let lastDetent = detents.last,
               lastDetent.isFull,
@@ -810,7 +952,8 @@ final class PullerPresentationController: UIPresentationController {
             guard let self = self else {
                 return
             }
-            let frame = CGRect(origin: CGPoint(x: self.dragIndicatorView?.frame.origin.x ?? 0,
+            let x = self.toView.frame.origin.x + (self.screenWidth - self.dragIndicatorSize.width) / 2
+            let frame = CGRect(origin: CGPoint(x: x,
                                                y: self.toView.frame.origin.y + offset),
                                size: self.dragIndicatorSize)
             self.dragIndicatorView?.frame = frame
@@ -838,7 +981,7 @@ final class PullerPresentationController: UIPresentationController {
             
             self.isRotatingDevice = false
             if self.isKeyboardVisible,
-                let parameters = self.keyboard.keyboardParameters {
+               let parameters = self.keyboard.keyboardParameters {
                 self.handleShowingKeyboard(parameters: parameters)
             }
         }
@@ -908,6 +1051,11 @@ extension PullerPresentationController {
     
     func updateScrollView(_ scrollView: UIScrollView,
                           change: NSKeyValueObservedChange<CGPoint>) {
+        
+        if isHorizontal {
+            stopScrolling(scrollView)
+            return
+        }
         
         guard scrollView.contentOffset.y != scrollViewYOffset else {
             return

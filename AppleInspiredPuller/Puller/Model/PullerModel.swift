@@ -127,6 +127,14 @@ extension PullerModel {
 
 extension PullerModel {
     
+    enum Movement {
+        case vertical
+        case horizontal
+    }
+}
+
+extension PullerModel {
+    
     enum DragIndicator: Comparable {
         
         case none
