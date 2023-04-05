@@ -19,7 +19,8 @@ class SettingsViewController: UIViewController {
     
     @IBOutlet weak var closingLockedBySwipeSwitch: UISwitch!
     @IBOutlet weak var circleCloseButtonSwitch: UISwitch!
-
+    @IBOutlet weak var supportsInteractivePopGestureSwitch: UISwitch!
+    
     @IBOutlet weak var whatShouldToDoWhenSelectedARowControl: UISegmentedControl!
     
     private lazy var grapiteColor = UIColor(hex: 0x11100C)
@@ -80,6 +81,8 @@ class SettingsViewController: UIViewController {
         closingLockedBySwipeSwitch.isOn = settings.isModalInPresentation
         
         circleCloseButtonSwitch.isOn = settings.hasCircleCloseButton
+        
+        supportsInteractivePopGestureSwitch.isOn = settings.supportsInteractivePopGesture
     }
     
     @IBAction func pullerAnimatorChanged(_ sender: UISegmentedControl) {
@@ -163,6 +166,11 @@ class SettingsViewController: UIViewController {
         updateSheet()
     }
 
+    @IBAction func supportsInteractivePopGestureSwitchChanged(_ sender: UISwitch) {
+        PresentationSettings.sharedInstance.supportsInteractivePopGesture = sender.isOn
+        updateSheet()
+    }
+    
     func updateSheet() {
         let presentationSettings = PresentationSettings.sharedInstance
         let model = presentationSettings.makePullerModel(isSettings: true)

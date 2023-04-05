@@ -46,6 +46,7 @@ final class PullerPresentationController: UIPresentationController {
     private var toViewController: UIViewController { presentedViewController }
     private var isPhone: Bool { UIDevice.current.userInterfaceIdiom == .phone }
     private var isDialog: Bool { !model.hasDynamicHeight }
+    private var canBeDismissedHorizontally: Bool { model.hasDynamicHeight && model.supportsInteractivePopGesture }
     
     private let keyboard = Keyboard()
     private var isKeyboardVisible: Bool = false
@@ -541,7 +542,7 @@ final class PullerPresentationController: UIPresentationController {
         startedTouchPoint = touchPoint
         startedTouchDetent = nearestDetent(to: toView.frame.origin.y)
 
-        guard isPhone && model.hasDynamicHeight else {
+        guard isPhone && canBeDismissedHorizontally else {
             return
         }
         

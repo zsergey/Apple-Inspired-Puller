@@ -46,6 +46,10 @@ struct PullerModel {
     /// Does a puller have the rounded close button?
     let hasCircleCloseButton: Bool
 
+    /// Does a puller can be dismissed by swiping to right?
+    /// It has effect only on iPhones and for puller with dynamic height.
+    var supportsInteractivePopGesture: Bool
+
     /// It calls when a puller moves to detents values.
     var onChangeDetent: ((Detent) -> Void)?
     
@@ -66,7 +70,8 @@ struct PullerModel {
          decelerationRate: CGFloat = 0.99,
          dimmedAlpha: CGFloat = 0.4,
          hasDynamicHeight: Bool = true,
-         hasCircleCloseButton: Bool = true) {
+         hasCircleCloseButton: Bool = true,
+         supportsInteractivePopGesture: Bool = true) {
         self.detents = (detents.filter { $0.value != 0 }.count == 0 ? [.fitsContent] : detents.filter { $0.value != 0 }).sorted(by: <)
         self.animator = animator
         self.cornerRadius = cornerRadius
@@ -79,6 +84,7 @@ struct PullerModel {
         self.dimmedAlpha = dimmedAlpha
         self.hasDynamicHeight = hasDynamicHeight
         self.hasCircleCloseButton = hasCircleCloseButton
+        self.supportsInteractivePopGesture = supportsInteractivePopGesture
     }
 }
 

@@ -39,8 +39,8 @@
                         <rect key="frame" x="0.0" y="0.0" width="393" height="852"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
-                            <stackView opaque="NO" contentMode="scaleToFill" axis="vertical" distribution="fillEqually" alignment="center" spacing="25" translatesAutoresizingMaskIntoConstraints="NO" id="OFj-He-Zo1">
-                                <rect key="frame" x="8" y="91" width="377" height="481"/>
+                            <stackView opaque="NO" contentMode="scaleToFill" axis="vertical" distribution="fillEqually" alignment="center" spacing="20" translatesAutoresizingMaskIntoConstraints="NO" id="OFj-He-Zo1">
+                                <rect key="frame" x="8" y="91" width="377" height="535.33333333333337"/>
                                 <subviews>
                                     <stackView opaque="NO" contentMode="scaleToFill" spacing="50" translatesAutoresizingMaskIntoConstraints="NO" id="ERY-tk-CIA">
                                         <rect key="frame" x="39.333333333333343" y="0.0" width="298.33333333333326" height="59.333333333333336"/>
@@ -86,7 +86,7 @@
                                         </subviews>
                                     </stackView>
                                     <stackView opaque="NO" contentMode="scaleToFill" axis="vertical" alignment="center" spacing="8" translatesAutoresizingMaskIntoConstraints="NO" id="Gbk-Gh-S5I">
-                                        <rect key="frame" x="90" y="84.333333333333343" width="197" height="59.333333333333343"/>
+                                        <rect key="frame" x="90" y="79.333333333333343" width="197" height="59.333333333333343"/>
                                         <subviews>
                                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Drag indicator " textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" minimumScaleFactor="0.5" translatesAutoresizingMaskIntoConstraints="NO" id="ADh-lU-OvP">
                                                 <rect key="frame" x="42.666666666666657" y="0.0" width="112" height="20.333333333333332"/>
@@ -108,7 +108,7 @@
                                         </subviews>
                                     </stackView>
                                     <stackView opaque="NO" contentMode="scaleToFill" axis="vertical" alignment="center" spacing="8" translatesAutoresizingMaskIntoConstraints="NO" id="Paq-RG-4Kt">
-                                        <rect key="frame" x="16.666666666666657" y="168.66666666666669" width="344" height="59.333333333333343"/>
+                                        <rect key="frame" x="16.666666666666657" y="158.66666666666666" width="344" height="59.333333333333343"/>
                                         <subviews>
                                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Largest undimmed detent" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" minimumScaleFactor="0.5" translatesAutoresizingMaskIntoConstraints="NO" id="tjV-kB-k8R">
                                                 <rect key="frame" x="73.666666666666643" y="0.0" width="196.33333333333337" height="20.333333333333332"/>
@@ -117,7 +117,7 @@
                                                 <nil key="highlightedColor"/>
                                             </label>
                                             <segmentedControl opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="top" segmentControlStyle="plain" selectedSegmentIndex="0" translatesAutoresizingMaskIntoConstraints="NO" id="8aI-P6-3I4">
-                                                <rect key="frame" x="0.0" y="28.333333333333314" width="344" height="32"/>
+                                                <rect key="frame" x="0.0" y="28.333333333333343" width="344" height="32"/>
                                                 <segments>
                                                     <segment title="zero"/>
                                                     <segment title="small"/>
@@ -132,7 +132,7 @@
                                         </subviews>
                                     </stackView>
                                     <stackView opaque="NO" contentMode="scaleToFill" axis="vertical" alignment="center" spacing="8" translatesAutoresizingMaskIntoConstraints="NO" id="zfK-uz-vfW">
-                                        <rect key="frame" x="34.666666666666657" y="253.00000000000003" width="308" height="59.333333333333343"/>
+                                        <rect key="frame" x="34.666666666666657" y="238.00000000000003" width="308" height="59.333333333333343"/>
                                         <subviews>
                                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="What should to do when selected a row?" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" minimumScaleFactor="0.5" translatesAutoresizingMaskIntoConstraints="NO" id="JIN-Ry-rxM">
                                                 <rect key="frame" x="0.0" y="0.0" width="308" height="20.333333333333332"/>
@@ -153,7 +153,7 @@
                                         </subviews>
                                     </stackView>
                                     <stackView opaque="NO" contentMode="scaleToFill" spacing="25" translatesAutoresizingMaskIntoConstraints="NO" id="9cx-UA-Rj9">
-                                        <rect key="frame" x="38" y="337.33333333333331" width="301" height="59.333333333333314"/>
+                                        <rect key="frame" x="38" y="317.33333333333331" width="301" height="59.333333333333314"/>
                                         <subviews>
                                             <stackView opaque="NO" contentMode="scaleToFill" axis="vertical" alignment="center" spacing="8" translatesAutoresizingMaskIntoConstraints="NO" id="Spe-1G-R8A">
                                                 <rect key="frame" x="0.0" y="0.0" width="134.66666666666666" height="59.333333333333336"/>
@@ -192,7 +192,7 @@
                                         </subviews>
                                     </stackView>
                                     <stackView opaque="NO" contentMode="scaleToFill" spacing="25" translatesAutoresizingMaskIntoConstraints="NO" id="4DQ-J3-G2b">
-                                        <rect key="frame" x="5" y="421.66666666666663" width="367" height="59.333333333333314"/>
+                                        <rect key="frame" x="5" y="396.66666666666669" width="367" height="59.333333333333314"/>
                                         <subviews>
                                             <stackView opaque="NO" contentMode="scaleToFill" axis="vertical" alignment="center" spacing="8" translatesAutoresizingMaskIntoConstraints="NO" id="ENE-8i-c9M">
                                                 <rect key="frame" x="0.0" y="0.0" width="199.33333333333334" height="59.333333333333336"/>
@@ -204,7 +204,7 @@
                                                         <nil key="highlightedColor"/>
                                                     </label>
                                                     <switch opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" contentHorizontalAlignment="center" contentVerticalAlignment="center" translatesAutoresizingMaskIntoConstraints="NO" id="Zw0-3b-S4I">
-                                                        <rect key="frame" x="75.333333333333329" y="28.333333333333371" width="51" height="31"/>
+                                                        <rect key="frame" x="75.333333333333329" y="28.333333333333314" width="51" height="31"/>
                                                         <connections>
                                                             <action selector="closingLockedBySwipeSwitchChanged:" destination="PK2-Ei-2Pf" eventType="valueChanged" id="pTQ-uR-i27"/>
                                                         </connections>
@@ -221,7 +221,7 @@
                                                         <nil key="highlightedColor"/>
                                                     </label>
                                                     <switch opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" contentHorizontalAlignment="center" contentVerticalAlignment="center" translatesAutoresizingMaskIntoConstraints="NO" id="jYo-Oz-tp6">
-                                                        <rect key="frame" x="46.999999999999972" y="28.333333333333371" width="51" height="31"/>
+                                                        <rect key="frame" x="46.999999999999972" y="28.333333333333314" width="51" height="31"/>
                                                         <connections>
                                                             <action selector="circleCloseButtonSwitchSwitchChanged:" destination="PK2-Ei-2Pf" eventType="valueChanged" id="M7u-xR-Sbm"/>
                                                             <action selector="closingLockedBySwipeSwitchChanged:" destination="PK2-Ei-2Pf" eventType="valueChanged" id="ABH-iu-ALu"/>
@@ -229,6 +229,23 @@
                                                     </switch>
                                                 </subviews>
                                             </stackView>
+                                        </subviews>
+                                    </stackView>
+                                    <stackView opaque="NO" contentMode="scaleToFill" axis="vertical" alignment="center" spacing="8" translatesAutoresizingMaskIntoConstraints="NO" id="sq1-jS-PRa">
+                                        <rect key="frame" x="63.666666666666686" y="476" width="250" height="59.333333333333371"/>
+                                        <subviews>
+                                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Supports interactive pop gesture" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" minimumScaleFactor="0.5" translatesAutoresizingMaskIntoConstraints="NO" id="Kjv-As-Bpg">
+                                                <rect key="frame" x="0.0" y="0.0" width="250" height="20.333333333333332"/>
+                                                <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                                                <nil key="textColor"/>
+                                                <nil key="highlightedColor"/>
+                                            </label>
+                                            <switch opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" contentHorizontalAlignment="center" contentVerticalAlignment="center" translatesAutoresizingMaskIntoConstraints="NO" id="CTt-Ru-DmV">
+                                                <rect key="frame" x="100.33333333333333" y="28.333333333333371" width="50.999999999999986" height="31"/>
+                                                <connections>
+                                                    <action selector="supportsInteractivePopGestureSwitchChanged:" destination="PK2-Ei-2Pf" eventType="valueChanged" id="N2k-TS-81m"/>
+                                                </connections>
+                                            </switch>
                                         </subviews>
                                     </stackView>
                                 </subviews>
@@ -251,6 +268,7 @@
                         <outlet property="pullerAnimatorControl" destination="PsY-C5-BAY" id="gGO-zb-esb"/>
                         <outlet property="scrollingExpandsWhenScrolledToEdgeSwitch" destination="JYB-hc-j63" id="oZH-Yy-hb6"/>
                         <outlet property="slowAnimationsSwitch" destination="KtU-3d-LQr" id="paa-ku-S0c"/>
+                        <outlet property="supportsInteractivePopGestureSwitch" destination="CTt-Ru-DmV" id="0mz-GK-M02"/>
                         <outlet property="whatShouldToDoWhenSelectedARowControl" destination="Knb-6t-1SV" id="FNk-VT-dro"/>
                     </connections>
                 </viewController>

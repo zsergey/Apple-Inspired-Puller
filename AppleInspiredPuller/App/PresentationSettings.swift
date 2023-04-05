@@ -20,6 +20,7 @@ class PresentationSettings {
     var isModalInPresentation: Bool = false
     var dismissWhenSelectedARow: Bool = false
     var hasCircleCloseButton: Bool = true
+    var supportsInteractivePopGesture: Bool = true
     
     func makePullerModel(detents: [PullerModel.Detent]? = nil,
                          isSettings: Bool = false,
@@ -32,6 +33,7 @@ class PresentationSettings {
                     keyboardExpands: keyboardExpands,
                     largestUndimmedDetent: largestUndimmedDetent,
                     hasDynamicHeight: hasDynamicHeight,
-                    hasCircleCloseButton: hasCircleCloseButton)
+                    hasCircleCloseButton: hasCircleCloseButton,
+                    supportsInteractivePopGesture: supportsInteractivePopGesture)
     }
 }
