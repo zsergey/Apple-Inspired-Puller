@@ -10,7 +10,7 @@ import UIKit
 class SomeViewController: UIViewController {
     
     lazy var tableView = UITableView()
-    lazy var button = Button()
+    lazy private var button = Button()
     lazy var appleLabel = UILabel()
     lazy var refreshControl = UIRefreshControl()
 
@@ -228,7 +228,7 @@ extension SomeViewController {
     }
 }
 
-class TextField: UITextField {
+private class TextField: UITextField {
     
     override func textRect(forBounds bounds: CGRect) -> CGRect {
         CGRectInset(bounds, 16, 0)
@@ -239,7 +239,7 @@ class TextField: UITextField {
     }
 }
 
-class Button: UIButton {
+private class Button: UIButton {
     
     static let highlightedColor = UIColor(hex: 0xE18AAA)
     static let normalColor = UIColor(hex: 0xE4A0B7)

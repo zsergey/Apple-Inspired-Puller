@@ -149,7 +149,6 @@ final class PullerPresentationController: UIPresentationController {
         super.presentationTransitionWillBegin()
         
         setupDimmingView()
-        setupScrollView()
         setupViews()
         setupCloseButton()
         
@@ -159,6 +158,12 @@ final class PullerPresentationController: UIPresentationController {
         
         updateDragIndicatorView()
         updateCloseButton()
+    }
+    
+    override func presentationTransitionDidEnd(_ completed: Bool) {
+        super.presentationTransitionDidEnd(completed)
+        
+        setupScrollView()
     }
     
     override func viewWillTransition(to size: CGSize,
@@ -290,8 +295,13 @@ final class PullerPresentationController: UIPresentationController {
     }
     
     private func setupScrollView() {
-        scrollView = findScrollView(in: toView)
+        scrollView = toViewController.findScrollView()
         scrollViewInsets = scrollView?.contentInset ?? .zero
+
+        scrollViewObservation?.invalidate()
+        scrollViewObservation = scrollView?.observe(\.contentOffset, options: .new) { [weak self] scrollView, change in
+            self?.updateScrollView(scrollView, change: change)
+        }
 
         if let tableView = scrollView as? UITableView,
            tableView.refreshControl != nil {
@@ -352,11 +362,6 @@ final class PullerPresentationController: UIPresentationController {
             self.updateDimmingView()
             self.updateDragIndicatorView()
             self.updateCloseButton()
-        }
-        
-        scrollViewObservation?.invalidate()
-        scrollViewObservation = scrollView?.observe(\.contentOffset, options: .new) { [weak self] scrollView, change in
-            self?.updateScrollView(scrollView, change: change)
         }
     }
     
@@ -1018,7 +1023,7 @@ extension PullerPresentationController: UIGestureRecognizerDelegate {
     func gestureRecognizer(_ gestureRecognizer: UIGestureRecognizer,
                            shouldRecognizeSimultaneouslyWith otherGestureRecognizer: UIGestureRecognizer) -> Bool {
         
-        let shouldRecognizeSimultaneously = gestureRecognizer.state != .changed && otherGestureRecognizer.view == scrollView
+        let shouldRecognizeSimultaneously = gestureRecognizer.state != .changed && gestureRecognizer.state != .ended && otherGestureRecognizer.view == scrollView
         
         if shouldRecognizeSimultaneously {
             panGestureSource = .scrollView
@@ -1032,23 +1037,6 @@ extension PullerPresentationController: UIGestureRecognizerDelegate {
 // MARK: - UIScrollView support
 
 extension PullerPresentationController {
-    
-    func findScrollView(in view: UIView?) -> UIScrollView? {
-        guard let view = view else {
-            return nil
-        }
-        for index in view.subviews.indices {
-            let subView = view.subviews[index]
-            if let scrollView = subView as? UIScrollView {
-                return scrollView
-            }
-            let scrollView = findScrollView(in: subView)
-            if scrollView != nil {
-                return scrollView
-            }
-        }
-        return nil
-    }
     
     func updateScrollView(_ scrollView: UIScrollView,
                           change: NSKeyValueObservedChange<CGPoint>) {

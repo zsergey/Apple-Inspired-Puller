@@ -56,6 +56,11 @@ class MainViewController: UIViewController {
         if #available(iOS 14.0, *) {
             items += [.apple(name: "Color Picker: Medium, Large", detents: [.medium, .large], type: .color)]
         }
+        if #available(iOS 13.0, *) {
+            items += [.apple(name: "SwiftUI: ScrollView", detents: [.custom(0.25), .medium, .large], type: .swiftUI(.scrollView))]
+            items += [.apple(name: "SwiftUI: List", detents: [.custom(0.25), .medium, .large], type: .swiftUI(.list))]
+        }
+
         return items
     }
     
@@ -78,6 +83,10 @@ class MainViewController: UIViewController {
         }
         
         items += [.custom(name: "Fits content (random text)", detents: [.fitsContent], type: .text)]
+        if #available(iOS 13.0, *) {
+            items += [.custom(name: "SwiftUI: ScrollView", detents: [.custom(0.25), .medium, .large], type: .swiftUI(.scrollView))]
+            items += [.custom(name: "SwiftUI: List", detents: [.custom(0.25), .medium, .large], type: .swiftUI(.list))]
+        }
 
         return items
     }
@@ -131,6 +140,8 @@ class MainViewController: UIViewController {
             return makeColorPicker()
         case .text:
             return TextViewController()
+        case .swiftUI(let typeView):
+            return SwiftUIViewController(typeView: typeView)
         }
     }
     
@@ -264,10 +275,16 @@ extension MainViewController {
     
     struct Item {
         
+        enum TypeSwifUIView {
+            case scrollView
+            case list
+        }
+        
         enum TypeViewController {
             case some
             case color
             case text
+            case swiftUI(TypeSwifUIView)
         }
         
         let name: String

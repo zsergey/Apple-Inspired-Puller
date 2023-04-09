@@ -38,6 +38,7 @@
 		ADD754A5299E6755005EC3BD /* PullerTransitioningDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = ADD754A4299E6755005EC3BD /* PullerTransitioningDelegate.swift */; };
 		ADD754A7299E80DC005EC3BD /* CALayerExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = ADD754A6299E80DC005EC3BD /* CALayerExtensions.swift */; };
 		ADD8097929A3827C0083B246 /* UIScreenExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = ADD8097829A3827C0083B246 /* UIScreenExtensions.swift */; };
+		ADDEAF5B29E251B900050F84 /* SwiftUIViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = ADDEAF5A29E251B900050F84 /* SwiftUIViewController.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -77,6 +78,7 @@
 		ADD754A4299E6755005EC3BD /* PullerTransitioningDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PullerTransitioningDelegate.swift; sourceTree = "<group>"; };
 		ADD754A6299E80DC005EC3BD /* CALayerExtensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CALayerExtensions.swift; sourceTree = "<group>"; };
 		ADD8097829A3827C0083B246 /* UIScreenExtensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UIScreenExtensions.swift; sourceTree = "<group>"; };
+		ADDEAF5A29E251B900050F84 /* SwiftUIViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SwiftUIViewController.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -148,6 +150,7 @@
 				ADCC4B5529CB340400527E3C /* MainViewController.swift */,
 				ADCC4B5929CB340400527E3C /* SomeViewController.swift */,
 				ADD0C9E029D5B06000472023 /* TextViewController.swift */,
+				ADDEAF5A29E251B900050F84 /* SwiftUIViewController.swift */,
 				ADCC4B5A29CB340400527E3C /* PresentationSettings.swift */,
 				ADCC4B5F29CB340400527E3C /* SettingsViewController.swift */,
 			);
@@ -236,6 +239,8 @@
 			dependencies = (
 			);
 			name = AppleInspiredPuller;
+			packageProductDependencies = (
+			);
 			productName = SheetsByApple;
 			productReference = ADCD802B299BD2FD006713AA /* AppleInspiredPuller.app */;
 			productType = "com.apple.product-type.application";
@@ -266,6 +271,8 @@
 				Base,
 			);
 			mainGroup = ADCD8022299BD2FD006713AA;
+			packageReferences = (
+			);
 			productRefGroup = ADCD802C299BD2FD006713AA /* Products */;
 			projectDirPath = "";
 			projectRoot = "";
@@ -294,6 +301,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				ADCC4B6129CB340400527E3C /* UIViewExtensions.swift in Sources */,
+				ADDEAF5B29E251B900050F84 /* SwiftUIViewController.swift in Sources */,
 				ADCC4B6429CB340400527E3C /* PresentationSettings.swift in Sources */,
 				ADD1CC12299F6A4D0029B536 /* UIViewControllerExtensions.swift in Sources */,
 				ADCC4B3529CB126E00527E3C /* AppleDetent.swift in Sources */,
@@ -467,7 +475,7 @@
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 103;
+				CURRENT_PROJECT_VERSION = 111;
 				DEVELOPMENT_TEAM = G9N53683T3;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = AppleInspiredPuller/Info.plist;
@@ -499,7 +507,7 @@
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 103;
+				CURRENT_PROJECT_VERSION = 111;
 				DEVELOPMENT_TEAM = G9N53683T3;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = AppleInspiredPuller/Info.plist;

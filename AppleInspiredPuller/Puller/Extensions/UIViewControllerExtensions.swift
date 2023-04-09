@@ -54,3 +54,34 @@ extension UIViewController {
         present(viewController, animated: true, completion: completion)
     }
 }
+
+public extension UIViewController {
+    
+    func findScrollView() -> UIScrollView? {
+        if let navigationController = self as? UINavigationController,
+           let view = navigationController.topViewController?.view {
+            return findScrollView(in: view)
+        }
+        
+        return findScrollView(in: view)
+    }
+    
+    private func findScrollView(in view: UIView?) -> UIScrollView? {
+        guard let view = view else {
+            return nil
+        }
+        for index in view.subviews.indices {
+            let subView = view.subviews[index]
+            if let scrollView = subView as? UIScrollView {
+                return scrollView
+            }
+            let scrollView = findScrollView(in: subView)
+            if scrollView != nil {
+                return scrollView
+            }
+        }
+        return nil
+    }
+
+}
+
