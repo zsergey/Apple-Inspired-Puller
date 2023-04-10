@@ -36,12 +36,13 @@ final class PullerAnimationController: NSObject {
         
         toViewController.view.frame.origin.y = UIScreen.main.bounds.maxY
 
+        let adjustedDetent = adjustDetent(detent, toViewController: toViewController)
+        
         model.animator.animate { [weak self] in
             guard let self = self else {
                 return
             }
             
-            let adjustedDetent = self.adjustDetent(detent, toViewController: toViewController)
             let viewHeight = self.screenHeight * adjustedDetent.value
             toViewController.view.frame.origin.y = self.screenHeight - viewHeight
             
@@ -51,7 +52,7 @@ final class PullerAnimationController: NSObject {
 
         } completion: { [weak self] _ in
             
-            self?.model.onChangeDetent?(detent)
+            self?.model.onChangeDetent?(adjustedDetent)
 
             fromViewController.endAppearanceTransition()
             toViewController.endAppearanceTransition()
@@ -122,11 +123,11 @@ final class PullerAnimationController: NSObject {
             if viewHeight > largeHeight, viewHeight < screenHeight {
                 viewHeight = largeHeight
             }
-
             let detentValue = viewHeight / screenHeight
-            pullerPresentationController?.apply(detents: [.custom(detentValue)])
+            let detent = PullerModel.Detent(rawValue: detentValue)
+            pullerPresentationController?.apply(detents: [detent])
             
-            return .custom(detentValue)
+            return detent
             
         } else if detent.isFitContent {
             

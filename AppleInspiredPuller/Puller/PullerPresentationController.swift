@@ -164,6 +164,7 @@ final class PullerPresentationController: UIPresentationController {
         super.presentationTransitionDidEnd(completed)
         
         setupScrollView()
+        updateFirstDetentAsSelected()
     }
     
     override func viewWillTransition(to size: CGSize,
@@ -208,6 +209,12 @@ final class PullerPresentationController: UIPresentationController {
         containerView?.layoutIfNeeded()
     }
     
+    private func updateFirstDetentAsSelected() {
+        if selectedDetent == .fitsContent {
+            setFirstDetentAsSelected()
+        }
+    }
+
     private func setFirstDetentAsSelected() {
         guard let firstDetent = detents.first else {
             return

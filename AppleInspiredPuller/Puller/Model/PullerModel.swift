@@ -128,6 +128,18 @@ extension PullerModel {
         }
         
         static var zero: Detent { .custom(0.0) }
+        
+        init(rawValue: CGFloat) {
+            if rawValue == Detent.medium.value {
+                self = .medium
+            } else if rawValue == Detent.large.value {
+                self = .large
+            } else if rawValue == Detent.full.value {
+                self = .full
+            } else {
+                self = .custom(rawValue)
+            }
+        }
     }
 }
 
