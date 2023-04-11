@@ -56,7 +56,7 @@ class MainViewController: UIViewController {
         if #available(iOS 14.0, *) {
             items += [.apple(name: "Color Picker: Medium, Large", detents: [.medium, .large], type: .color)]
         }
-        if #available(iOS 13.0, *) {
+        if #available(iOS 15.0, *) {
             items += [.apple(name: "SwiftUI: ScrollView", detents: [.custom(0.25), .medium, .large], type: .swiftUI(.scrollView))]
             items += [.apple(name: "SwiftUI: List", detents: [.custom(0.25), .medium, .large], type: .swiftUI(.list))]
         }
@@ -83,7 +83,7 @@ class MainViewController: UIViewController {
         }
         
         items += [.custom(name: "Fits content (random text)", detents: [.fitsContent], type: .text)]
-        if #available(iOS 13.0, *) {
+        if #available(iOS 15.0, *) {
             items += [.custom(name: "SwiftUI: ScrollView", detents: [.custom(0.25), .medium, .large], type: .swiftUI(.scrollView))]
             items += [.custom(name: "SwiftUI: List", detents: [.custom(0.25), .medium, .large], type: .swiftUI(.list))]
         }
@@ -147,16 +147,7 @@ class MainViewController: UIViewController {
     
     private func makePullerModel(pullerItem: Item) -> PullerModel {
         let presentationSettings = PresentationSettings.sharedInstance
-        var pullerModel = presentationSettings.makePullerModel(detents: pullerItem.detents, hasDynamicHeight: pullerItem.hasDynamicHeight)
-        pullerModel.onChangeDetent = { detent in
-            print("change to \(detent)")
-        }
-        pullerModel.onWillDismiss = {
-            print("puller will be closed")
-        }
-        pullerModel.onDidDismiss = {
-            print("puller was closed")
-        }
+        let pullerModel = presentationSettings.makePullerModel(detents: pullerItem.detents, hasDynamicHeight: pullerItem.hasDynamicHeight)
         return pullerModel
     }
     

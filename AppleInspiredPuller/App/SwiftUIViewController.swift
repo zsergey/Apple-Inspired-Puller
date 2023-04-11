@@ -27,7 +27,7 @@ class SwiftUIViewController: UIViewController {
     }
     
     private func setupView() {
-        if #available(iOS 13.0, *) {
+        if #available(iOS 15.0, *) {
             var hostingController: UIViewController
             switch typeView {
             case .scrollView:
@@ -36,15 +36,18 @@ class SwiftUIViewController: UIViewController {
                 hostingController = UIHostingController(rootView: DemoList())
             }
             addChild(hostingController)
+            hostingController.didMove(toParent: self)
             view.addSubview(hostingController.view)
             hostingController.view.pin(to: view)
         }
     }
 }
 
-@available(iOS 13.0, *)
+@available(iOS 15.0, *)
 struct DemoScrollView: View {
     
+    @State private var isPresented = false
+
     var body: some View {
         ScrollView {
             VStack(spacing: 20) {
@@ -55,29 +58,69 @@ struct DemoScrollView: View {
                         .padding()
                         .background(Color.yellow)
                         .cornerRadius(16)
-                        .foregroundColor(Color(UIColor(hex: 0x11100C)))
+                        .foregroundColor(Color(.grapiteColor))
                 }
+                .onTapGesture {
+                    isPresented = true
+                }
+                .puller(isPresented: $isPresented,
+                        model: PresentationSettings.sharedInstance.makePullerModel(detents: [.medium]),
+                        content: DemoPullerContent.init)
             }
             .padding()
-            .foregroundColor(.green)
         }
     }
 }
 
-@available(iOS 13.0, *)
+@available(iOS 15.0, *)
 struct DemoList: View {
-    
+
+    @State private var isPresented = false
+
     var body: some View {
         List {
             ForEach(0..<20) { index in
                 Text("Eat some more of these soft French buns and drink some tea.")
                     .font(.body)
+                    .frame(maxWidth: .infinity)
                     .padding()
                     .background(Color.yellow)
                     .cornerRadius(16)
-                    .foregroundColor(Color(UIColor(hex: 0x11100C)))
+                    .foregroundColor(Color(.grapiteColor))
             }
+            .onTapGesture {
+                isPresented = true
+            }
+            .puller(isPresented: $isPresented,
+                    model: PresentationSettings.sharedInstance.makePullerModel(detents: [.medium]),
+                    content: DemoPullerContent.init)
+
         }
         .listStyle(PlainListStyle())
+    }
+}
+
+@available(iOS 15.0, *)
+struct DemoPullerContent: View {
+    @Environment(\.dismiss) var dismiss
+
+    var body: some View {
+        VStack {
+            Color.yellow.edgesIgnoringSafeArea(.all)
+            Text("Eat some more of these soft French buns and drink some tea.")
+                .font(.title)
+                .frame(maxWidth: .infinity)
+                .padding()
+                .foregroundColor(Color(.grapiteColor))
+            Color.yellow.edgesIgnoringSafeArea(.all)
+            Button("Close") {
+                dismiss()
+            }
+            .foregroundColor(Color(.grapiteColor))
+            .buttonStyle(.bordered)
+            .tint(.pink)
+        }
+        .frame(maxWidth: .infinity, maxHeight: .infinity)
+        .background(Color.yellow)
     }
 }

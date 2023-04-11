@@ -23,22 +23,19 @@ class SettingsViewController: UIViewController {
     
     @IBOutlet weak var whatShouldToDoWhenSelectedARowControl: UISegmentedControl!
     
-    private lazy var grapiteColor = UIColor(hex: 0x11100C)
-    private lazy var peachColor = UIColor(hex: 0xFED6BC)
-
     override func viewDidLoad() {
         super.viewDidLoad()
         setupViews()
     }
     
     private func setupViews() {
-        pullerAnimatorControl.setTextColor(grapiteColor)
-        dragIndicatorControl.setTextColor(grapiteColor)
-        largestUndimmedDetentControl.setTextColor(grapiteColor)
-        whatShouldToDoWhenSelectedARowControl.setTextColor(grapiteColor)
+        pullerAnimatorControl.setTextColor(.grapiteColor)
+        dragIndicatorControl.setTextColor(.grapiteColor)
+        largestUndimmedDetentControl.setTextColor(.grapiteColor)
+        whatShouldToDoWhenSelectedARowControl.setTextColor(.grapiteColor)
         setLabelTextColor(in: view)
         
-        view.backgroundColor = peachColor
+        view.backgroundColor = .peachColor
 
         let settings = PresentationSettings.sharedInstance
 
@@ -180,7 +177,7 @@ class SettingsViewController: UIViewController {
     private func setLabelTextColor(in view: UIView) {
         for index in view.subviews.indices {
             let subView = view.subviews[index]
-            (subView as? UILabel)?.textColor = grapiteColor
+            (subView as? UILabel)?.textColor = .grapiteColor
             setLabelTextColor(in: subView)
         }
     }

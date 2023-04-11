@@ -18,9 +18,6 @@ class SomeViewController: UIViewController {
     
     private var dataSource: [Item] = []
     
-    private lazy var grapiteColor = UIColor(hex: 0x11100C)
-    private lazy var skyBlueColor = UIColor(hex: 0xC6D8FF)
-    private lazy var lightTurquoiseColor = UIColor(hex: 0xB5F2EA)
     private var topTableViewConstraint: NSLayoutConstraint?
     private var byApple: Bool = true
     
@@ -67,7 +64,7 @@ class SomeViewController: UIViewController {
         button.setTitle("Close", for: .normal)
         button.backgroundColor = Button.normalColor
         button.contentEdgeInsets = .init(top: 16, left: 50, bottom: 16, right: 50)
-        button.setTitleColor(grapiteColor, for: .normal)
+        button.setTitleColor(.grapiteColor, for: .normal)
         button.layer.cornerRadius = 16
         button.addTarget(self, action: #selector(didTapButton), for: .touchUpInside)
 
@@ -79,14 +76,14 @@ class SomeViewController: UIViewController {
     private func setupAppleLabel() {
         appleLabel.text = ""
         view.addSubview(appleLabel)
-        appleLabel.textColor = grapiteColor
+        appleLabel.textColor = .grapiteColor
         appleLabel.left(to: view, constant: 16)
         appleLabel.top(to: view, constant: 16)
     }
 
     func setBackgroundColor(_ byApple: Bool) {
         self.byApple = byApple
-        view.backgroundColor = byApple ? skyBlueColor : lightTurquoiseColor
+        view.backgroundColor = byApple ? .skyBlueColor : .lightTurquoiseColor
         appleLabel.isHidden = !byApple
     }
 
@@ -164,17 +161,17 @@ extension SomeViewController: UITableViewDataSource {
             cell.textLabel?.textColor = UIColor.black
         }
         
-        textField?.textColor = grapiteColor
-        cell.textLabel?.textColor = grapiteColor
+        textField?.textColor = .grapiteColor
+        cell.textLabel?.textColor = .grapiteColor
         cell.backgroundColor = .clear
         let selectedBackgroundView = UIView()
-        selectedBackgroundView.backgroundColor = byApple ? lightTurquoiseColor : skyBlueColor
+        selectedBackgroundView.backgroundColor = byApple ? .lightTurquoiseColor : .skyBlueColor
         cell.selectedBackgroundView = selectedBackgroundView
     }
     
     private func makeTextField(on cell: UITableViewCell) -> TextField {
         let textField = TextField(frame: .zero)
-        textField.backgroundColor = byApple ? lightTurquoiseColor : skyBlueColor
+        textField.backgroundColor = byApple ? .lightTurquoiseColor : .skyBlueColor
         textField.layer.cornerRadius = 16
         textField.returnKeyType = .done
         textField.delegate = self
