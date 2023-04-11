@@ -38,6 +38,7 @@
 		ADD754A5299E6755005EC3BD /* PullerTransitioningDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = ADD754A4299E6755005EC3BD /* PullerTransitioningDelegate.swift */; };
 		ADD754A7299E80DC005EC3BD /* CALayerExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = ADD754A6299E80DC005EC3BD /* CALayerExtensions.swift */; };
 		ADD8097929A3827C0083B246 /* UIScreenExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = ADD8097829A3827C0083B246 /* UIScreenExtensions.swift */; };
+		ADDBCA7029E3972F00F1F757 /* PullerViewModifier.swift in Sources */ = {isa = PBXBuildFile; fileRef = ADDBCA6F29E3972F00F1F757 /* PullerViewModifier.swift */; };
 		ADDEAF5B29E251B900050F84 /* SwiftUIViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = ADDEAF5A29E251B900050F84 /* SwiftUIViewController.swift */; };
 /* End PBXBuildFile section */
 
@@ -78,6 +79,7 @@
 		ADD754A4299E6755005EC3BD /* PullerTransitioningDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PullerTransitioningDelegate.swift; sourceTree = "<group>"; };
 		ADD754A6299E80DC005EC3BD /* CALayerExtensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CALayerExtensions.swift; sourceTree = "<group>"; };
 		ADD8097829A3827C0083B246 /* UIScreenExtensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UIScreenExtensions.swift; sourceTree = "<group>"; };
+		ADDBCA6F29E3972F00F1F757 /* PullerViewModifier.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PullerViewModifier.swift; sourceTree = "<group>"; };
 		ADDEAF5A29E251B900050F84 /* SwiftUIViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SwiftUIViewController.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -219,6 +221,7 @@
 				ADC11A6129B8197900EEF274 /* PullerPresentationController.swift */,
 				ADC11A5F29B8195B00EEF274 /* PullerAnimationController.swift */,
 				ADD754A4299E6755005EC3BD /* PullerTransitioningDelegate.swift */,
+				ADDBCA6F29E3972F00F1F757 /* PullerViewModifier.swift */,
 			);
 			path = Puller;
 			sourceTree = "<group>";
@@ -318,6 +321,7 @@
 				ADD0C9E129D5B06000472023 /* TextViewController.swift in Sources */,
 				AD08E66C29CC1ACA00581DBA /* PullerPresentationController.swift in Sources */,
 				ADCC4B6529CB340400527E3C /* main.m in Sources */,
+				ADDBCA7029E3972F00F1F757 /* PullerViewModifier.swift in Sources */,
 				ADB508A129BB6EB400673FAA /* CATransactionExtensions.swift in Sources */,
 				ADCC4B4829CB317500527E3C /* Shadow.swift in Sources */,
 				ADD1CC14299F80B30029B536 /* CGPointExtensions.swift in Sources */,

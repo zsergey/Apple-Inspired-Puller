@@ -9,6 +9,7 @@
 * Compatible with iOS 11+, the puller offers four preset detents: `medium`, `large`, `full` and `fitsContent`. In the `full` state, the puller supports device corners, like the Apple Music app. When using the `fitsContent` state, the puller adapts its height to the default height of the presenting view controller's view. Additionally, you can set as many `custom` detents you want.
 * Supports inside and outside drag indicators.
 * Supports interactive pop gesture.
+* Supports SwiftUI.
 * Works seamlessly with ScrollView.
 * Compatible with keyboard and device rotation.
 * Can be opened in a similar style to the AirPods Pro sheet as shown by Apple.
@@ -140,6 +141,56 @@ let pullerModel = PullerModel(animator: .spring,
                               detents: [.fitsContent])
 
 presentAsPuller(viewController, model: pullerModel)
+```
+</details>
+
+### Supports SwiftUI
+
+You can present `UIHostingController` with any SwiftUI view.
+
+<details>
+<summary>Source Code</summary>
+
+```swift
+let viewController = UIHostingController(rootView: DemoScrollView())
+
+let pullerModel = PullerModel(animator: .spring, 
+                              detents: [.full], 
+                              dragIndicator: .outside(.black))
+
+presentAsPuller(viewController, model: pullerModel)
+```
+</details>
+
+Also you can apply the `.puller` modifier to any SwiftUI view, ensuring you attach a binding to the `isPresented` property — just like the standard `.sheet` modifier.
+
+<details>
+<summary>Source Code</summary>
+
+```swift
+struct DemoPullerContent: View {
+    @Environment(\.dismiss) var dismiss
+
+    var body: some View {
+        ZStack {
+            Color.primary.edgesIgnoringSafeArea(.all)
+            Button("Dismiss") {
+                dismiss()
+            }
+        }
+    }
+}
+
+struct ContentView: View {
+    @State private var isPresented = false
+
+    var body: some View {
+        Button("Present") {
+            isPresented.toggle()
+        }
+        .puller(isPresented: $isPresented, model: PullerModel(detents: [.medium]), content: DemoPullerContent.init)
+    }
+}
 ```
 </details>
 

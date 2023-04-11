@@ -13,8 +13,6 @@ class TextViewController: UIViewController {
     
     private var label: UILabel?
     private let insets: UIEdgeInsets = .init(top: 65, left: 16, bottom: 16, right: 16)
-    private lazy var lightTurquoiseColor = UIColor(hex: 0xB5F2EA)
-    private lazy var grapiteColor = UIColor(hex: 0x11100C)
 
     override func loadView() {
         view = ResizableView()
@@ -23,7 +21,7 @@ class TextViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        view.backgroundColor = lightTurquoiseColor
+        view.backgroundColor = .lightTurquoiseColor
         setupView()
     }
     
@@ -45,7 +43,7 @@ class TextViewController: UIViewController {
         let label = UILabel()
         label.numberOfLines = 0
         label.text = text
-        label.textColor = grapiteColor
+        label.textColor = .grapiteColor
         view.addSubview(label)
         label.top(to: view, constant: insets.top)
         label.left(to: view, constant: insets.left)

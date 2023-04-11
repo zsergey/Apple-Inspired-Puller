@@ -25,15 +25,25 @@ class PresentationSettings {
     func makePullerModel(detents: [PullerModel.Detent]? = nil,
                          isSettings: Bool = false,
                          hasDynamicHeight: Bool = true) -> PullerModel {
-        PullerModel(animator: animator.duration(isSettings ? 0.5 : (slowAnimations ? 5 : 0.5)),
-                    detents: detents ?? [.custom(0.25), .medium, .large],
-                    dragIndicator: dragIndicator,
-                    isModalInPresentation: isSettings ? false : isModalInPresentation,
-                    scrollingExpandsWhenScrolledToEdge: scrollingExpandsWhenScrolledToEdge,
-                    keyboardExpands: keyboardExpands,
-                    largestUndimmedDetent: largestUndimmedDetent,
-                    hasDynamicHeight: hasDynamicHeight,
-                    hasCircleCloseButton: hasCircleCloseButton,
-                    supportsInteractivePopGesture: supportsInteractivePopGesture)
+        var model = PullerModel(animator: animator.duration(isSettings ? 0.5 : (slowAnimations ? 5 : 0.5)),
+                                detents: detents ?? [.custom(0.25), .medium, .large],
+                                dragIndicator: dragIndicator,
+                                isModalInPresentation: isSettings ? false : isModalInPresentation,
+                                scrollingExpandsWhenScrolledToEdge: scrollingExpandsWhenScrolledToEdge,
+                                keyboardExpands: keyboardExpands,
+                                largestUndimmedDetent: largestUndimmedDetent,
+                                hasDynamicHeight: hasDynamicHeight,
+                                hasCircleCloseButton: hasCircleCloseButton,
+                                supportsInteractivePopGesture: supportsInteractivePopGesture)
+        model.onChangeDetent = { detent in
+            print("change to \(detent)")
+        }
+        model.onWillDismiss = {
+            print("puller will be closed")
+        }
+        model.onDidDismiss = {
+            print("puller was closed")
+        }
+        return model
     }
 }

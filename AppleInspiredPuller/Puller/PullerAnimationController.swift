@@ -20,6 +20,7 @@ final class PullerAnimationController: NSObject {
     private var screenWidth: CGFloat { UIScreen.main.bounds.width }
     private var screenHeight: CGFloat { UIScreen.main.bounds.height }
     private let safeAreaBottomInset: CGFloat = UIApplication.shared.windows.filter { $0.isKeyWindow }.first?.safeAreaInsets.bottom ?? 0
+    private var previousCornerRadius: CGFloat = 0
     
     init(model: PullerModel,
          viewController: UIViewController?,
@@ -35,7 +36,7 @@ final class PullerAnimationController: NSObject {
                          using transitionContext: UIViewControllerContextTransitioning) {
         
         toViewController.view.frame.origin.y = UIScreen.main.bounds.maxY
-
+        previousCornerRadius = fromViewController.view.layer.cornerRadius
         let adjustedDetent = adjustDetent(detent, toViewController: toViewController)
         
         model.animator.animate { [weak self] in
@@ -99,14 +100,23 @@ final class PullerAnimationController: NSObject {
                 dragIndicatorView?.alpha = 0
             }
         } completion: { [weak self] _ in
-            toViewController.view.layer.setCornerRadius(0)
+            guard let self = self else {
+                return
+            }
+            
+            if self.previousCornerRadius == UIScreen.main.displayCornerRadius {
+                toViewController.view.layer.setCornerRadius(0)
+            } else {
+                toViewController.view.layer.setCornerRadius(self.previousCornerRadius)
+            }
+            
             fromViewController.endAppearanceTransition()
             toViewController.endAppearanceTransition()
             transitionContext.completeTransition(!transitionContext.transitionWasCancelled)
             
-            self?.model.onDidDismiss?()
+            self.model.onDidDismiss?()
             
-            self?.viewController?.pullerTransitioningDelegate = nil
+            self.viewController?.pullerTransitioningDelegate = nil
         }
     }
     
