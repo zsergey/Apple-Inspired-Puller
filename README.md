@@ -19,6 +19,16 @@
 ## 💡 Attention
 The puller uses <a href="https://github.com/kylebshr/ScreenCorners">a specific approach to obtain the screen corner radius</a> by adding a `displayCornerRadius` property to `UIScreen`, which reads the private `_displayCornerRadius`. The selector somewhat obscured, which usually means it will get past app review. However, use at your own risk!
 
+## 🏗️ Installation
+
+Apple-Inspired Puller is available through SPM. Just add this repository as a dependency to your package or project.
+
+```swift
+dependencies: [
+    .package(url: "https://github.com/zsergey/Apple-Inspired-Puller.git", branch: "develop")
+]
+```
+
 ## 🛠 Examples
 
 ### Default puller
@@ -146,16 +156,18 @@ presentAsPuller(viewController, model: pullerModel)
 
 ### Supports SwiftUI
 
-You can present `UIHostingController` with any SwiftUI view.
+You can present `PullerHostingController` with any SwiftUI view.
+
+<img src="https://github.com/zsergey/apple-inspired-puller/blob/develop/supports-swiftui.gif" height="600" width="278">
 
 <details>
 <summary>Source Code</summary>
 
 ```swift
-let viewController = UIHostingController(rootView: DemoScrollView())
+let viewController = PullerHostingController(rootView: DemoScrollView())
 
 let pullerModel = PullerModel(animator: .spring, 
-                              detents: [.full], 
+                              detents: [.custom(0.25), .medium, .full], 
                               dragIndicator: .outside(.black))
 
 presentAsPuller(viewController, model: pullerModel)
@@ -163,6 +175,8 @@ presentAsPuller(viewController, model: pullerModel)
 </details>
 
 Also you can apply the `.puller` modifier to any SwiftUI view, ensuring you attach a binding to the `isPresented` property — just like the standard `.sheet` modifier.
+
+<img src="https://github.com/zsergey/apple-inspired-puller/blob/develop/swiftui-modifier.gif" height="600" width="278">
 
 <details>
 <summary>Source Code</summary>
@@ -172,12 +186,16 @@ struct DemoPullerContent: View {
     @Environment(\.dismiss) var dismiss
 
     var body: some View {
-        ZStack {
-            Color.primary.edgesIgnoringSafeArea(.all)
-            Button("Dismiss") {
+        VStack {
+            Spacer()
+            Text("Eat some more of these soft French buns and drink some tea.")
+            Spacer()
+            Button("Close") {
                 dismiss()
             }
+            .padding(.bottom, 20)
         }
+        .frame(maxWidth: .infinity, maxHeight: .infinity)
     }
 }
 
@@ -200,3 +218,11 @@ Demo app includes settings for adjusting animation speed and customizing puller 
 
 <img src="https://github.com/zsergey/apple-inspired-puller/blob/develop/settings.gif" height="600" width="278">
 
+## 🐥 Author
+You can find me on Twitter [@zsergey](https://twitter.com/zsergey)
+
+## 🎉 Contributing
+Feel free to add issues or pull requests here on GitHub. I cannot guarantee that I will accept your changes, but feel free to fork the repo and make changes as you see fit. Thanks!
+
+## 🎓 License
+Apple-Inspired Puller is released under the MIT license. See LICENSE for more information.

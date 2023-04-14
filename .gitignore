@@ -22,3 +22,5 @@ xcuserdata/*
 *.ipa
 *.dSYM.zip
 *.xcuserdata
+*.build
+.swiftpm
