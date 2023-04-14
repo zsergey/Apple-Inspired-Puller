@@ -67,7 +67,7 @@ final class PullerPresentationController: UIPresentationController {
 
     private var needsScrollingPuller = false
     private var scrollView: UIScrollView?
-    private var scrollViewInsets: UIEdgeInsets = .zero
+    private var scrollViewContentInsetBottom: CGFloat = .zero
     private var scrollViewObservation: NSKeyValueObservation?
     private var scrollViewYOffset: CGFloat = 0
     
@@ -303,7 +303,7 @@ final class PullerPresentationController: UIPresentationController {
     
     private func setupScrollView() {
         scrollView = toViewController.findScrollView()
-        scrollViewInsets = scrollView?.contentInset ?? .zero
+        scrollViewContentInsetBottom = scrollView?.contentInset.bottom ?? .zero
 
         scrollViewObservation?.invalidate()
         scrollViewObservation = scrollView?.observe(\.contentOffset, options: .new) { [weak self] scrollView, change in
@@ -461,15 +461,14 @@ final class PullerPresentationController: UIPresentationController {
     }
     
     private func adjustScrollViewInsets(parameters: Keyboard.Parameters) {
-        var insets = scrollViewInsets
-        insets.bottom = parameters.frameTo.height
-        scrollView?.contentInset = insets
-        scrollView?.scrollIndicatorInsets = insets
+        let value = parameters.frameTo.height
+        scrollView?.contentInset.bottom = value
+        scrollView?.scrollIndicatorInsets.bottom = value
     }
     
     private func handleHidingKeyboard(parameters: Keyboard.Parameters) {
-        scrollView?.contentInset = scrollViewInsets
-        scrollView?.scrollIndicatorInsets = scrollViewInsets
+        scrollView?.contentInset.bottom = scrollViewContentInsetBottom
+        scrollView?.scrollIndicatorInsets.bottom = scrollViewContentInsetBottom
         
         selectedDetent = previousDetent
         isKeyboardVisible = false
