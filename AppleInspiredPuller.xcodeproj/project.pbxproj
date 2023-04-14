@@ -13,6 +13,8 @@
 		AD67DCBC29B9B2D30045354C /* UIScrollViewExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD67DCBB29B9B2D30045354C /* UIScrollViewExtensions.swift */; };
 		ADB508A129BB6EB400673FAA /* CATransactionExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = ADB508A029BB6EB400673FAA /* CATransactionExtensions.swift */; };
 		ADC11A6029B8195B00EEF274 /* PullerAnimationController.swift in Sources */ = {isa = PBXBuildFile; fileRef = ADC11A5F29B8195B00EEF274 /* PullerAnimationController.swift */; };
+		ADCBFD6329E9393700A956AC /* SwiftUIViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = ADCBFD6229E9393700A956AC /* SwiftUIViewController.swift */; };
+		ADCBFD6529E9607000A956AC /* PullerHostingController.swift in Sources */ = {isa = PBXBuildFile; fileRef = ADCBFD6429E9607000A956AC /* PullerHostingController.swift */; };
 		ADCC4B3529CB126E00527E3C /* AppleDetent.swift in Sources */ = {isa = PBXBuildFile; fileRef = ADCC4B3429CB126E00527E3C /* AppleDetent.swift */; };
 		ADCC4B3E29CB309200527E3C /* PullerModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = ADCC4B3C29CB309200527E3C /* PullerModel.swift */; };
 		ADCC4B3F29CB309200527E3C /* PullerAnimator.swift in Sources */ = {isa = PBXBuildFile; fileRef = ADCC4B3D29CB309200527E3C /* PullerAnimator.swift */; };
@@ -39,7 +41,6 @@
 		ADD754A7299E80DC005EC3BD /* CALayerExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = ADD754A6299E80DC005EC3BD /* CALayerExtensions.swift */; };
 		ADD8097929A3827C0083B246 /* UIScreenExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = ADD8097829A3827C0083B246 /* UIScreenExtensions.swift */; };
 		ADDBCA7029E3972F00F1F757 /* PullerViewModifier.swift in Sources */ = {isa = PBXBuildFile; fileRef = ADDBCA6F29E3972F00F1F757 /* PullerViewModifier.swift */; };
-		ADDEAF5B29E251B900050F84 /* SwiftUIViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = ADDEAF5A29E251B900050F84 /* SwiftUIViewController.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -51,6 +52,8 @@
 		ADB508A029BB6EB400673FAA /* CATransactionExtensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CATransactionExtensions.swift; sourceTree = "<group>"; };
 		ADC11A5F29B8195B00EEF274 /* PullerAnimationController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PullerAnimationController.swift; sourceTree = "<group>"; };
 		ADC11A6129B8197900EEF274 /* PullerPresentationController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PullerPresentationController.swift; sourceTree = "<group>"; };
+		ADCBFD6229E9393700A956AC /* SwiftUIViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SwiftUIViewController.swift; sourceTree = "<group>"; };
+		ADCBFD6429E9607000A956AC /* PullerHostingController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PullerHostingController.swift; sourceTree = "<group>"; };
 		ADCC4B3429CB126E00527E3C /* AppleDetent.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppleDetent.swift; sourceTree = "<group>"; };
 		ADCC4B3C29CB309200527E3C /* PullerModel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PullerModel.swift; sourceTree = "<group>"; };
 		ADCC4B3D29CB309200527E3C /* PullerAnimator.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PullerAnimator.swift; sourceTree = "<group>"; };
@@ -80,7 +83,6 @@
 		ADD754A6299E80DC005EC3BD /* CALayerExtensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CALayerExtensions.swift; sourceTree = "<group>"; };
 		ADD8097829A3827C0083B246 /* UIScreenExtensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UIScreenExtensions.swift; sourceTree = "<group>"; };
 		ADDBCA6F29E3972F00F1F757 /* PullerViewModifier.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PullerViewModifier.swift; sourceTree = "<group>"; };
-		ADDEAF5A29E251B900050F84 /* SwiftUIViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SwiftUIViewController.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -152,7 +154,7 @@
 				ADCC4B5529CB340400527E3C /* MainViewController.swift */,
 				ADCC4B5929CB340400527E3C /* SomeViewController.swift */,
 				ADD0C9E029D5B06000472023 /* TextViewController.swift */,
-				ADDEAF5A29E251B900050F84 /* SwiftUIViewController.swift */,
+				ADCBFD6229E9393700A956AC /* SwiftUIViewController.swift */,
 				ADCC4B5A29CB340400527E3C /* PresentationSettings.swift */,
 				ADCC4B5F29CB340400527E3C /* SettingsViewController.swift */,
 			);
@@ -221,6 +223,7 @@
 				ADC11A6129B8197900EEF274 /* PullerPresentationController.swift */,
 				ADC11A5F29B8195B00EEF274 /* PullerAnimationController.swift */,
 				ADD754A4299E6755005EC3BD /* PullerTransitioningDelegate.swift */,
+				ADCBFD6429E9607000A956AC /* PullerHostingController.swift */,
 				ADDBCA6F29E3972F00F1F757 /* PullerViewModifier.swift */,
 			);
 			path = Puller;
@@ -303,8 +306,8 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				ADCBFD6329E9393700A956AC /* SwiftUIViewController.swift in Sources */,
 				ADCC4B6129CB340400527E3C /* UIViewExtensions.swift in Sources */,
-				ADDEAF5B29E251B900050F84 /* SwiftUIViewController.swift in Sources */,
 				ADCC4B6429CB340400527E3C /* PresentationSettings.swift in Sources */,
 				ADD1CC12299F6A4D0029B536 /* UIViewControllerExtensions.swift in Sources */,
 				ADCC4B3529CB126E00527E3C /* AppleDetent.swift in Sources */,
@@ -328,6 +331,7 @@
 				ADCC4B4329CB30F500527E3C /* PullerDimmingView.swift in Sources */,
 				ADCC4B6629CB340400527E3C /* AppDelegate.m in Sources */,
 				ADCC4B6229CB340400527E3C /* UIColorExtensions.swift in Sources */,
+				ADCBFD6529E9607000A956AC /* PullerHostingController.swift in Sources */,
 				ADC11A6029B8195B00EEF274 /* PullerAnimationController.swift in Sources */,
 				ADD8097929A3827C0083B246 /* UIScreenExtensions.swift in Sources */,
 				ADD754A5299E6755005EC3BD /* PullerTransitioningDelegate.swift in Sources */,

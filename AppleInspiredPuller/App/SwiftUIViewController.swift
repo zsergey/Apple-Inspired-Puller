@@ -9,6 +9,15 @@ import SwiftUI
 
 class SwiftUIViewController: UIViewController {
     
+    private class RootView: UIView {
+        
+        override var frame: CGRect {
+            didSet {
+                subviews.first?.frame = CGRect(origin: .zero, size: frame.size)
+            }
+        }
+    }
+    
     var typeView: MainViewController.Item.TypeSwifUIView
     
     init(typeView: MainViewController.Item.TypeSwifUIView) {
@@ -20,6 +29,15 @@ class SwiftUIViewController: UIViewController {
         fatalError("init(coder:) has not been implemented")
     }
     
+    override func loadView() {
+        switch typeView {
+        case .nativeScrollView, .nativeList:
+            view = UIView()
+        case .scrollView, .list:
+            view = RootView()
+        }
+    }
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         
@@ -28,12 +46,16 @@ class SwiftUIViewController: UIViewController {
     
     private func setupView() {
         if #available(iOS 15.0, *) {
-            var hostingController: UIViewController
+            let hostingController: UIViewController
             switch typeView {
-            case .scrollView:
+            case .nativeScrollView:
                 hostingController = UIHostingController(rootView: DemoScrollView())
-            case .list:
+            case .nativeList:
                 hostingController = UIHostingController(rootView: DemoList())
+            case .scrollView:
+                hostingController = PullerHostingController(rootView: DemoScrollView())
+            case .list:
+                hostingController = PullerHostingController(rootView: DemoList())
             }
             addChild(hostingController)
             hostingController.didMove(toParent: self)
@@ -102,25 +124,26 @@ struct DemoList: View {
 
 @available(iOS 15.0, *)
 struct DemoPullerContent: View {
+
     @Environment(\.dismiss) var dismiss
+    @Environment(\.colorScheme) var colorScheme
 
     var body: some View {
         VStack {
-            Color.yellow.edgesIgnoringSafeArea(.all)
+            Spacer()
             Text("Eat some more of these soft French buns and drink some tea.")
                 .font(.title)
                 .frame(maxWidth: .infinity)
                 .padding()
-                .foregroundColor(Color(.grapiteColor))
-            Color.yellow.edgesIgnoringSafeArea(.all)
+                .foregroundColor(colorScheme == .dark ? Color.white : Color.black)
+            Spacer()
             Button("Close") {
                 dismiss()
             }
             .foregroundColor(Color(.grapiteColor))
-            .buttonStyle(.bordered)
-            .tint(.pink)
+            .buttonStyle(.borderedProminent)
+            .padding(.bottom, 20)
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity)
-        .background(Color.yellow)
     }
 }

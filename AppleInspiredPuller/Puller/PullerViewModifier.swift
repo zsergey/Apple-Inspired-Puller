@@ -52,7 +52,7 @@ struct PullerViewModifier<ContentView: View>: ViewModifier {
                 onDidDismiss?()
             }
             
-            let toViewController = UIHostingController(rootView: content())
+            let toViewController = PullerHostingController(rootView: content())
             fromViewController.presentAsPuller(toViewController, model: model)
         }
     }
