@@ -852,7 +852,13 @@ final class PullerPresentationController: UIPresentationController {
             scale = calcValue(lastDetent: lastDetent, maxValue: maxScale, minValue: minScale)
         }
 
-        fromView.layer.transform = CATransform3DMakeScale(scale, scale, maxScale)
+        let transform = CATransform3DMakeScale(scale, scale, maxScale)
+        if let superview = fromView.superview,
+           type(of: superview) == NSClassFromString("UITransitionView") {
+            superview.layer.transform = transform
+        } else {
+            fromView.layer.transform = transform
+        }
     }
         
     private func updateCornerRadius() {
