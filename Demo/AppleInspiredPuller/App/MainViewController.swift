@@ -88,6 +88,9 @@ class MainViewController: UIViewController {
             items += [.custom(name: "SwiftUI: ScrollView", detents: [.custom(0.25), .medium, .full], type: .swiftUI(.scrollView))]
             items += [.custom(name: "SwiftUI: List", detents: [.custom(0.25), .medium, .full], type: .swiftUI(.list))]
         }
+        
+        items += [.custom(name: "Image", detents: [.fitsContent], type: .image(hasContent: false))]
+        items += [.custom(name: "Image + Content", detents: [.custom(0.25), .medium, .full], type: .image(hasContent: true))]
 
         return items
     }
@@ -143,6 +146,8 @@ class MainViewController: UIViewController {
             return TextViewController()
         case .swiftUI(let typeView):
             return SwiftUIViewController(typeView: typeView)
+        case .image(let hasContent):
+            return hasContent ? ImageContentViewController() : ImageViewController()
         }
     }
     
@@ -279,6 +284,7 @@ extension MainViewController {
             case color
             case text
             case swiftUI(TypeSwifUIView)
+            case image(hasContent: Bool)
         }
         
         let name: String

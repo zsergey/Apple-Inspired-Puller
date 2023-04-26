@@ -7,6 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		AD2E72FF29F8FB0500E9C7EF /* ImageViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD2E72FE29F8FB0500E9C7EF /* ImageViewController.swift */; };
+		AD2E730129F8FE3700E9C7EF /* ImageContentViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD2E730029F8FE3700E9C7EF /* ImageContentViewController.swift */; };
 		AD2FDE74299D20EB007FA7B1 /* AppleSheet.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD2FDE73299D20EB007FA7B1 /* AppleSheet.swift */; };
 		AD30F2F429CB4C4E0056BB40 /* UISegmentedControlExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD30F2F329CB4C4E0056BB40 /* UISegmentedControlExtensions.swift */; };
 		ADCBFD6329E9393700A956AC /* SwiftUIViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = ADCBFD6229E9393700A956AC /* SwiftUIViewController.swift */; };
@@ -26,6 +28,8 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		AD2E72FE29F8FB0500E9C7EF /* ImageViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImageViewController.swift; sourceTree = "<group>"; };
+		AD2E730029F8FE3700E9C7EF /* ImageContentViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImageContentViewController.swift; sourceTree = "<group>"; };
 		AD2FDE73299D20EB007FA7B1 /* AppleSheet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppleSheet.swift; sourceTree = "<group>"; };
 		AD30F2F329CB4C4E0056BB40 /* UISegmentedControlExtensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UISegmentedControlExtensions.swift; sourceTree = "<group>"; };
 		AD61761129BF2F3C00755515 /* AppleInspiredPuller-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "AppleInspiredPuller-Bridging-Header.h"; sourceTree = "<group>"; };
@@ -77,6 +81,8 @@
 				ADCC4B5929CB340400527E3C /* SomeViewController.swift */,
 				ADD0C9E029D5B06000472023 /* TextViewController.swift */,
 				ADCBFD6229E9393700A956AC /* SwiftUIViewController.swift */,
+				AD2E72FE29F8FB0500E9C7EF /* ImageViewController.swift */,
+				AD2E730029F8FE3700E9C7EF /* ImageContentViewController.swift */,
 				ADCC4B5A29CB340400527E3C /* PresentationSettings.swift */,
 				ADCC4B5F29CB340400527E3C /* SettingsViewController.swift */,
 			);
@@ -217,9 +223,11 @@
 				AD2FDE74299D20EB007FA7B1 /* AppleSheet.swift in Sources */,
 				ADCC4B6329CB340400527E3C /* SomeViewController.swift in Sources */,
 				AD30F2F429CB4C4E0056BB40 /* UISegmentedControlExtensions.swift in Sources */,
+				AD2E72FF29F8FB0500E9C7EF /* ImageViewController.swift in Sources */,
 				ADD0C9E129D5B06000472023 /* TextViewController.swift in Sources */,
 				ADCC4B6529CB340400527E3C /* main.m in Sources */,
 				ADCC4B6629CB340400527E3C /* AppDelegate.m in Sources */,
+				AD2E730129F8FE3700E9C7EF /* ImageContentViewController.swift in Sources */,
 				ADCC4B6229CB340400527E3C /* UIColorExtensions.swift in Sources */,
 				ADCC4B6029CB340400527E3C /* MainViewController.swift in Sources */,
 				ADCC4B6729CB340400527E3C /* SettingsViewController.swift in Sources */,
@@ -369,7 +377,7 @@
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 111;
+				CURRENT_PROJECT_VERSION = 112;
 				DEVELOPMENT_TEAM = G9N53683T3;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = AppleInspiredPuller/Info.plist;
@@ -401,7 +409,7 @@
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 111;
+				CURRENT_PROJECT_VERSION = 112;
 				DEVELOPMENT_TEAM = G9N53683T3;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = AppleInspiredPuller/Info.plist;

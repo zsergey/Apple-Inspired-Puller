@@ -212,6 +212,26 @@ struct ContentView: View {
 ```
 </details>
 
+### An image in the puller
+
+You can show the puller with an image.
+
+<img src="https://github.com/zsergey/apple-inspired-puller/blob/develop/image-in-puller.gif" height="600" width="278">
+
+<details>
+<summary>Source Code</summary>
+
+```swift
+let viewController = ImageViewController()
+
+let pullerModel = PullerModel(animator: .spring, 
+                              detents: [.fitsContent], 
+                              dragIndicator: .outside(.black))
+
+presentAsPuller(viewController, model: pullerModel)
+```
+</details>
+
 ### Settings in Demo
 
 Demo app includes settings for adjusting animation speed and customizing puller behavior.
