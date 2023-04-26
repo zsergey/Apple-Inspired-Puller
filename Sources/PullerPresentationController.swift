@@ -69,7 +69,14 @@ final public class PullerPresentationController: UIPresentationController {
     private var scrollView: UIScrollView?
     private var scrollViewContentInsetBottom: CGFloat = .zero
     private var scrollViewObservation: NSKeyValueObservation?
+    private var scrollViewContentInsetObservation: NSKeyValueObservation?
     private var scrollViewYOffset: CGFloat = 0
+    private var currentContentInsetTop: CGFloat = 0
+    private var isScrollViewAtTopStarted: Bool = true
+    private var isScrollViewAtTop: Bool {
+        (scrollView?.contentInset.top ?? 0) + scrollViewYOffset <= 0
+    }
+    private var isProgrammaticallyScrolling = false
     
     private lazy var screenWidth = { UIScreen.main.bounds.width }()
     private lazy var screenHeight = { UIScreen.main.bounds.height }()
@@ -306,8 +313,25 @@ final public class PullerPresentationController: UIPresentationController {
         scrollViewContentInsetBottom = scrollView?.contentInset.bottom ?? .zero
 
         scrollViewObservation?.invalidate()
+        scrollViewContentInsetObservation?.invalidate()
+
+        scrollViewContentInsetObservation = scrollView?.observe(\.contentInset, options: .new) { [weak self] scrollView, change in
+            guard let self = self else {
+                return
+            }
+            let delta = scrollView.contentInset.top - self.currentContentInsetTop
+            self.scrollViewYOffset -= delta
+            self.currentContentInsetTop = scrollView.contentInset.top
+        }
+
         scrollViewObservation = scrollView?.observe(\.contentOffset, options: .new) { [weak self] scrollView, change in
-            self?.updateScrollView(scrollView, change: change)
+            guard let self = self else {
+                return
+            }
+
+            if !self.isProgrammaticallyScrolling {
+                self.updateScrollView(scrollView, change: change)
+            }
         }
 
         if let tableView = scrollView as? UITableView,
@@ -326,7 +350,6 @@ final public class PullerPresentationController: UIPresentationController {
 
         let panGestureRecognizer = makePanGestureRecognizer()
         toView.addGestureRecognizer(panGestureRecognizer)
-        toViewController.pullerPresentationController = self
         self.panGestureRecognizer = panGestureRecognizer
         
         if model.hasDynamicHeight {
@@ -396,6 +419,8 @@ final public class PullerPresentationController: UIPresentationController {
     }
     
     private func setupController() {
+        toViewController.pullerPresentationController = self
+
         standardDetents = model.detents
         
         dimmedDetent = model.detents.first { detent in
@@ -550,6 +575,7 @@ final public class PullerPresentationController: UIPresentationController {
             needsScrollingPuller = true
         }
         
+        isScrollViewAtTopStarted = isScrollViewAtTop
         startedTouchPoint = touchPoint
         startedTouchDetent = nearestDetent(to: toView.frame.origin.y)
 
@@ -658,7 +684,7 @@ final public class PullerPresentationController: UIPresentationController {
         offset = offset > 0 ? pow(offset, exponent) : -pow(-offset, exponent)
         
         let isMovingByView = panGestureSource == .view
-        let isMovingDownByScrollView = panGestureSource == .scrollView && scrollDirection == .down && scrollViewYOffset == 0 && offset > 0
+        let isMovingDownByScrollView = panGestureSource == .scrollView && scrollDirection == .down && isScrollViewAtTop && offset > 0
         let needsBouncingPuller = isMovingByView || isMovingDownByScrollView
         
         CATransaction.disableAnimations {
@@ -1015,6 +1041,12 @@ final public class PullerPresentationController: UIPresentationController {
 
         fromFrameObservation?.invalidate()
         fromFrameObservation = nil
+        
+        scrollViewObservation?.invalidate()
+        scrollViewObservation = nil
+        
+        scrollViewContentInsetObservation?.invalidate()
+        scrollViewContentInsetObservation = nil
     }
 }
 
@@ -1103,21 +1135,23 @@ extension PullerPresentationController {
         if isReachedLastDetent() {
             trackScrolling(scrollView)
             setNeedsScrollingPuller(false)
-        } else {
+        } else if isScrollViewAtTopStarted {
             stopScrolling(scrollView)
             setNeedsScrollingPuller(true)
+        } else {
+            trackScrolling(scrollView)
+            setNeedsScrollingPuller(false)
         }
     }
     
     private func handleScrollingToBottom(_ scrollView: UIScrollView) {
 
-        let isZeroYOffset = scrollViewYOffset == 0
-        if scrollView.isScrolling && isZeroYOffset {
+        if scrollView.isScrolling && isScrollViewAtTop {
             stopScrolling(scrollView)
             setNeedsScrollingPuller(true)
         } else {
             trackScrolling(scrollView)
-            setNeedsScrollingPuller(isZeroYOffset)
+            setNeedsScrollingPuller(isScrollViewAtTop)
         }
     }
     
@@ -1129,10 +1163,14 @@ extension PullerPresentationController {
     }
     
     private func stopScrolling(_ scrollView: UIScrollView) {
+        isProgrammaticallyScrolling = true
         scrollView.setContentOffset(CGPoint(x: 0, y: scrollViewYOffset), animated: false)
+        DispatchQueue.main.async {
+            self.isProgrammaticallyScrolling = false
+        }
     }
     
     private func trackScrolling(_ scrollView: UIScrollView) {
-        scrollViewYOffset = max(scrollView.contentOffset.y, 0)
+        scrollViewYOffset = scrollView.contentOffset.y
     }
 }

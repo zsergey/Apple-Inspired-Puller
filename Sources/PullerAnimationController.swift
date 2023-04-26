@@ -37,14 +37,19 @@ final class PullerAnimationController: NSObject {
         
         toViewController.view.frame.origin.y = UIScreen.main.bounds.maxY
         previousCornerRadius = fromViewController.view.layer.cornerRadius
+
         let adjustedDetent = adjustDetent(detent, toViewController: toViewController)
-        
+        let viewHeight = screenHeight * adjustedDetent.value
+        let frame = toViewController.view.frame
+        CATransaction.disableAnimations {
+            toViewController.view.frame = CGRect(origin: frame.origin, size: CGSize(width: frame.size.width, height: viewHeight))
+        }
+
         model.animator.animate { [weak self] in
             guard let self = self else {
                 return
             }
             
-            let viewHeight = self.screenHeight * adjustedDetent.value
             toViewController.view.frame.origin.y = self.screenHeight - viewHeight
             
             if self.model.isModalInPresentation {
