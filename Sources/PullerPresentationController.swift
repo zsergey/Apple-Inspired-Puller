@@ -538,14 +538,7 @@ final public class PullerPresentationController: UIPresentationController {
             self.toView.frame = self.adjustHeight(y: detentY)
         }
     }
-    
-    private func isReachedLastDetent() -> Bool {
-        guard let lastDetent = detents.last else {
-            return false
-        }
-        return Int(toView.frame.minY) <= Int(calcPosition(detent: lastDetent))
-    }
-    
+        
     @objc private func handlePanGesture(_ gesture: UIPanGestureRecognizer) {
                     
         let touchPoint = gesture.location(in: toView)
@@ -573,6 +566,10 @@ final public class PullerPresentationController: UIPresentationController {
     private func handleBeginGesture(_ gesture: UIPanGestureRecognizer, at touchPoint: CGPoint) {
         if panGestureSource == .view {
             needsScrollingPuller = true
+        }
+
+        if panGestureSource == .scrollView {
+            onStartScrolling()
         }
         
         isScrollViewAtTopStarted = isScrollViewAtTop
@@ -918,7 +915,9 @@ final public class PullerPresentationController: UIPresentationController {
         }
         
         var fromRadius = maxRadius + minRadius - toRadius
-        fromRadius = fromViewController.presentingViewController == nil ? fromRadius: model.cornerRadius
+        if !(fromViewController is UINavigationController) {
+            fromRadius = fromViewController.presentingViewController == nil ? fromRadius : model.cornerRadius
+        }
         if isHorizontal {
             fromRadius = selectedDetent.isExpanded ? fromRadius : minRadius
         }
@@ -1103,36 +1102,19 @@ extension PullerPresentationController {
         scrollDirection = scrollView.contentOffset.y > scrollViewYOffset ? .top : .down
         switch scrollDirection {
         case .top:
-            handleScrollingToTop(scrollView)
+            expandPuller(scrollView)
         case .down:
-            handleScrollingToBottom(scrollView)
+            collapsePuller(scrollView)
         case .stop:
             break
         }
     }
     
-    private func handleScrollingToTop(_ scrollView: UIScrollView) {
+    private func expandPuller(_ scrollView: UIScrollView) {
         
-        if model.scrollingExpandsWhenScrolledToEdge {
-            expandPullerToLastDetent(scrollView)
-        } else {
-            expandPullerToNearestDetent(scrollView)
-        }
-    }
-    
-    private func expandPullerToNearestDetent(_ scrollView: UIScrollView) {
-        
-        if Int(toView.frame.origin.y) > Int(calcPosition(detent: startedTouchDetent)) {
-            stopScrolling(scrollView)
-            setNeedsScrollingPuller(true)
-        } else {
-            trackScrolling(scrollView)
-            setNeedsScrollingPuller(false)
-        }
-    }
-    
-    private func expandPullerToLastDetent(_ scrollView: UIScrollView) {
-        if isReachedLastDetent() {
+        let toDetent = (model.scrollingExpandsWhenScrolledToEdge ? detents.last : nil) ?? startedTouchDetent
+        let isReachedDetent = Int(toView.frame.minY) <= Int(calcPosition(detent: toDetent))
+        if isReachedDetent {
             trackScrolling(scrollView)
             setNeedsScrollingPuller(false)
         } else if isScrollViewAtTopStarted {
@@ -1144,14 +1126,21 @@ extension PullerPresentationController {
         }
     }
     
-    private func handleScrollingToBottom(_ scrollView: UIScrollView) {
-
+    private func collapsePuller(_ scrollView: UIScrollView) {
+        
         if scrollView.isScrolling && isScrollViewAtTop {
             stopScrolling(scrollView)
             setNeedsScrollingPuller(true)
         } else {
             trackScrolling(scrollView)
             setNeedsScrollingPuller(isScrollViewAtTop)
+        }
+    }
+    
+    private func onStartScrolling() {
+        if let scrollView = scrollView,
+           scrollView.contentInset.top + scrollViewYOffset < 0 {
+            scrollViewYOffset = -scrollView.contentInset.top
         }
     }
     
