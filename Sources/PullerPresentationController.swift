@@ -756,10 +756,10 @@ final public class PullerPresentationController: UIPresentationController {
     }
     
     private func calcBody() -> (x: CGFloat, width: CGFloat, inset: CGFloat) {
-        let inset: CGFloat = model.hasDynamicHeight ? 0 : 6
+        let offset: CGFloat = model.hasDynamicHeight ? 0 : 6
         let width: CGFloat = UIDevice.current.userInterfaceIdiom == .pad ? max(screenWidth, screenHeight) * 0.4 : min(screenWidth, screenHeight)
         let x: CGFloat = (screenWidth - width) / 2
-        return (x + inset, width - inset * 2, inset)
+        return (x + offset, width - offset * 2, offset)
     }
     
     private func adjustHeight(y: CGFloat) -> CGRect {

@@ -49,8 +49,9 @@ final class PullerAnimationController: NSObject {
             guard let self = self else {
                 return
             }
-            
-            toViewController.view.frame.origin.y = self.screenHeight - viewHeight
+
+            let offset: CGFloat = self.model.hasDynamicHeight ? 0 : 6
+            toViewController.view.frame.origin.y = self.screenHeight - viewHeight - offset
             
             if self.model.isModalInPresentation {
                 UIImpactFeedbackGenerator(style: .light).impactOccurred()
