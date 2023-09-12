@@ -11,10 +11,17 @@ final public class PullerPresentationController: UIPresentationController {
     
     // MARK: - Public properties
     
+    public var lastDetent: PullerModel.Detent? {
+        model.detents.last
+    }
+    
     public var selectedDetent: PullerModel.Detent {
         set { setInternalSelectedDetent(newValue) }
         get { internalSelectedDetent }
     }
+    
+    var isFitContent: Bool = false
+    var defaultViewHeight: CGFloat = 0
     
     /// `PullerPresentationController` can modify the dismissal direction for `PullerAnimationController`.
     weak var animationController: PullerAnimationController?
@@ -181,14 +188,28 @@ final public class PullerPresentationController: UIPresentationController {
         
         isRotatingDevice = true
         guard let containerView = containerView,
-              let firstDetent = detents.first else {
+            let firstDetent = detents.first else {
             isRotatingDevice = false
             return
         }
-
+        
         screenWidth = containerView.frame.size.height
         screenHeight = containerView.frame.size.width
-        minimumPullerHeight = calcHeight(detent: firstDetent)
+
+        if isFitContent  {
+            let detentValue = defaultViewHeight / screenHeight
+            let detent = PullerModel.Detent(rawValue: detentValue)
+            apply(detents: [detent])
+            minimumPullerHeight = calcHeight(detent: detent)
+            
+            if selectedDetent != .zero {
+                DispatchQueue.main.async {
+                    self.selectedDetent = detent
+                }
+            }
+        } else {
+            minimumPullerHeight = calcHeight(detent: firstDetent)
+        }
         
         DispatchQueue.main.async {
             self.adjustHeightByTransition()

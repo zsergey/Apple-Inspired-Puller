@@ -72,7 +72,7 @@ public struct PullerModel {
                 hasDynamicHeight: Bool = true,
                 hasCircleCloseButton: Bool = true,
                 supportsInteractivePopGesture: Bool = true) {
-        self.detents = (detents.filter { $0.value != 0 }.count == 0 ? [.fitsContent] : detents.filter { $0.value != 0 }).sorted(by: <)
+        self.detents = detents.sorted(by: <)
         self.animator = animator
         self.cornerRadius = cornerRadius
         self.dragIndicator = dragIndicator

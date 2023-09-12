@@ -141,6 +141,9 @@ final class PullerAnimationController: NSObject {
             }
             let detentValue = viewHeight / screenHeight
             let detent = PullerModel.Detent(rawValue: detentValue)
+            
+            pullerPresentationController?.isFitContent = true
+            pullerPresentationController?.defaultViewHeight = viewHeight
             pullerPresentationController?.apply(detents: [detent])
             
             return detent
