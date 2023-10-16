@@ -24,13 +24,13 @@ class MainViewController: UIViewController {
     private func setupDataSource() {
         dataSource = []
 
+        let sergeySection = Section(name: "By Sergey", items: makeSergeyItems())
+        dataSource.append(sergeySection)
+
         if #available(iOS 15.0, *) {
             let appleSection = Section(name: "By Apple", items: makeAppleItems())
             dataSource.append(appleSection)
         }
-        
-        let sergeySection = Section(name: "By Sergey", items: makeSergeyItems())
-        dataSource.append(sergeySection)
     }
     
     private func makeAppleItems() -> [Item] {
@@ -92,6 +92,8 @@ class MainViewController: UIViewController {
         items += [.custom(name: "Image", detents: [.fitsContent], type: .image(hasContent: false))]
         items += [.custom(name: "Image + Content", detents: [.custom(0.25), .medium, .full], type: .image(hasContent: true))]
 
+        items += [.custom(name: "Adaptable", detents: [.fitsContent], type: .adaptable)]
+
         return items
     }
     
@@ -148,12 +150,20 @@ class MainViewController: UIViewController {
             return SwiftUIViewController(typeView: typeView)
         case .image(let hasContent):
             return hasContent ? ImageContentViewController() : ImageViewController()
+        case .adaptable:
+            return AdaptableViewController()
         }
     }
     
     private func makePullerModel(pullerItem: Item) -> PullerModel {
         let presentationSettings = PresentationSettings.sharedInstance
-        let pullerModel = presentationSettings.makePullerModel(detents: pullerItem.detents, hasDynamicHeight: pullerItem.hasDynamicHeight)
+        var hasCircleCloseButton = presentationSettings.hasCircleCloseButton
+        if case .adaptable = pullerItem.type {
+            hasCircleCloseButton = false
+        }
+        let pullerModel = presentationSettings.makePullerModel(detents: pullerItem.detents,
+                                                               hasDynamicHeight: pullerItem.hasDynamicHeight,
+                                                               hasCircleCloseButton: hasCircleCloseButton)
         return pullerModel
     }
     
@@ -285,6 +295,7 @@ extension MainViewController {
             case text
             case swiftUI(TypeSwifUIView)
             case image(hasContent: Bool)
+            case adaptable
         }
         
         let name: String

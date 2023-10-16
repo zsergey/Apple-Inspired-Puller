@@ -103,7 +103,9 @@ final public class PullerPresentationController: UIPresentationController {
     
     private var dragIndicatorView: PullerDragIndicatorView?
     private let dragIndicatorSize = CGSize(width: 36.0, height: 5.0)
-    private let safeAreaTopInset: CGFloat = UIApplication.shared.windows.filter { $0.isKeyWindow }.first?.safeAreaInsets.top ?? 0
+    private lazy var window = UIApplication.shared.windows.filter { $0.isKeyWindow }.first
+    private lazy var safeAreaTopInset: CGFloat = window?.safeAreaInsets.top ?? 0
+    private lazy var safeAreaBottomInset: CGFloat = window?.safeAreaInsets.bottom ?? 0
     private var dragIndicatorInsideTopOffset: CGFloat { dragIndicatorSize.height }
     private var dragIndicatorOutsideTopOffset: CGFloat { -2 * dragIndicatorSize.height }
     
@@ -130,6 +132,26 @@ final public class PullerPresentationController: UIPresentationController {
         
         setupController()
         setupKeyboard()
+    }
+    
+    public func makeFitsContentDetent(height: CGFloat) -> PullerModel.Detent {
+        let largeHeight = screenHeight * PullerModel.Detent.large.value
+        
+        var viewHeight = height + safeAreaBottomInset
+        viewHeight = min(viewHeight, screenHeight)
+        if viewHeight > largeHeight, viewHeight < screenHeight {
+            viewHeight = largeHeight
+        }
+        let detentValue = viewHeight / screenHeight
+        let detent = PullerModel.Detent(rawValue: detentValue)
+        return detent
+    }
+    
+    public func setHeightThatMatches(detent: PullerModel.Detent) {
+        let height = calcHeight(detent: detent)
+        currentPullerHeight = height
+        minimumPullerHeight = height
+        selectedDetent = detent
     }
     
     public func apply(detents: [PullerModel.Detent]) {
@@ -792,7 +814,7 @@ final public class PullerPresentationController: UIPresentationController {
     }
     
     private func calcBody() -> (x: CGFloat, width: CGFloat, inset: CGFloat) {
-        let x: CGFloat = (screenWidth - pullerWidth) / 2
+        let x = (screenWidth - pullerWidth) / 2
         return (x + pullerOffset, pullerWidth - pullerOffset * 2, pullerOffset)
     }
     

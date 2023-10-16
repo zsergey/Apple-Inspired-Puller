@@ -7,6 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		AD035E222ADD305800742FBC /* Puller in Frameworks */ = {isa = PBXBuildFile; productRef = AD035E212ADD305800742FBC /* Puller */; };
+		AD2301842ADD242A008000D1 /* AdaptableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD2301832ADD242A008000D1 /* AdaptableViewController.swift */; };
 		AD2E72FF29F8FB0500E9C7EF /* ImageViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD2E72FE29F8FB0500E9C7EF /* ImageViewController.swift */; };
 		AD2E730129F8FE3700E9C7EF /* ImageContentViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD2E730029F8FE3700E9C7EF /* ImageContentViewController.swift */; };
 		AD2FDE74299D20EB007FA7B1 /* AppleSheet.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD2FDE73299D20EB007FA7B1 /* AppleSheet.swift */; };
@@ -24,10 +26,10 @@
 		ADCD8038299BD2FE006713AA /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = ADCD8037299BD2FE006713AA /* Assets.xcassets */; };
 		ADCD803B299BD2FE006713AA /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = ADCD8039299BD2FE006713AA /* LaunchScreen.storyboard */; };
 		ADD0C9E129D5B06000472023 /* TextViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = ADD0C9E029D5B06000472023 /* TextViewController.swift */; };
-		ADDCE0EA29E99E8600BB62A6 /* Puller in Frameworks */ = {isa = PBXBuildFile; productRef = ADDCE0E929E99E8600BB62A6 /* Puller */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		AD2301832ADD242A008000D1 /* AdaptableViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AdaptableViewController.swift; sourceTree = "<group>"; };
 		AD2E72FE29F8FB0500E9C7EF /* ImageViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImageViewController.swift; sourceTree = "<group>"; };
 		AD2E730029F8FE3700E9C7EF /* ImageContentViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImageContentViewController.swift; sourceTree = "<group>"; };
 		AD2FDE73299D20EB007FA7B1 /* AppleSheet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppleSheet.swift; sourceTree = "<group>"; };
@@ -56,7 +58,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				ADDCE0EA29E99E8600BB62A6 /* Puller in Frameworks */,
+				AD035E222ADD305800742FBC /* Puller in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -85,6 +87,7 @@
 				AD2E730029F8FE3700E9C7EF /* ImageContentViewController.swift */,
 				ADCC4B5A29CB340400527E3C /* PresentationSettings.swift */,
 				ADCC4B5F29CB340400527E3C /* SettingsViewController.swift */,
+				AD2301832ADD242A008000D1 /* AdaptableViewController.swift */,
 			);
 			path = App;
 			sourceTree = "<group>";
@@ -155,7 +158,7 @@
 			);
 			name = AppleInspiredPuller;
 			packageProductDependencies = (
-				ADDCE0E929E99E8600BB62A6 /* Puller */,
+				AD035E212ADD305800742FBC /* Puller */,
 			);
 			productName = SheetsByApple;
 			productReference = ADCD802B299BD2FD006713AA /* AppleInspiredPuller.app */;
@@ -188,7 +191,7 @@
 			);
 			mainGroup = ADCD8022299BD2FD006713AA;
 			packageReferences = (
-				ADDCE0E829E99E8600BB62A6 /* XCRemoteSwiftPackageReference "Apple-Inspired-Puller" */,
+				AD035E202ADD305800742FBC /* XCRemoteSwiftPackageReference "Apple-Inspired-Puller" */,
 			);
 			productRefGroup = ADCD802C299BD2FD006713AA /* Products */;
 			projectDirPath = "";
@@ -220,6 +223,7 @@
 				ADCBFD6329E9393700A956AC /* SwiftUIViewController.swift in Sources */,
 				ADCC4B6429CB340400527E3C /* PresentationSettings.swift in Sources */,
 				ADCC4B3529CB126E00527E3C /* AppleDetent.swift in Sources */,
+				AD2301842ADD242A008000D1 /* AdaptableViewController.swift in Sources */,
 				AD2FDE74299D20EB007FA7B1 /* AppleSheet.swift in Sources */,
 				ADCC4B6329CB340400527E3C /* SomeViewController.swift in Sources */,
 				AD30F2F429CB4C4E0056BB40 /* UISegmentedControlExtensions.swift in Sources */,
@@ -386,7 +390,7 @@
 				INFOPLIST_KEY_UIMainStoryboardFile = Main;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
-				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 12.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -418,7 +422,7 @@
 				INFOPLIST_KEY_UIMainStoryboardFile = Main;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
-				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 12.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -457,7 +461,7 @@
 /* End XCConfigurationList section */
 
 /* Begin XCRemoteSwiftPackageReference section */
-		ADDCE0E829E99E8600BB62A6 /* XCRemoteSwiftPackageReference "Apple-Inspired-Puller" */ = {
+		AD035E202ADD305800742FBC /* XCRemoteSwiftPackageReference "Apple-Inspired-Puller" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/zsergey/Apple-Inspired-Puller.git";
 			requirement = {
@@ -468,9 +472,9 @@
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
-		ADDCE0E929E99E8600BB62A6 /* Puller */ = {
+		AD035E212ADD305800742FBC /* Puller */ = {
 			isa = XCSwiftPackageProductDependency;
-			package = ADDCE0E829E99E8600BB62A6 /* XCRemoteSwiftPackageReference "Apple-Inspired-Puller" */;
+			package = AD035E202ADD305800742FBC /* XCRemoteSwiftPackageReference "Apple-Inspired-Puller" */;
 			productName = Puller;
 		};
 /* End XCSwiftPackageProductDependency section */

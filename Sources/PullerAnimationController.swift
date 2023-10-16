@@ -19,7 +19,6 @@ final class PullerAnimationController: NSObject {
     private weak var viewController: UIViewController?
     private var screenWidth: CGFloat { UIScreen.main.bounds.width }
     private var screenHeight: CGFloat { UIScreen.main.bounds.height }
-    private let safeAreaBottomInset: CGFloat = UIApplication.shared.windows.filter { $0.isKeyWindow }.first?.safeAreaInsets.bottom ?? 0
     private var previousCornerRadius: CGFloat = 0
     
     init(model: PullerModel,
@@ -126,25 +125,17 @@ final class PullerAnimationController: NSObject {
     
     private func adjustDetent(_ detent: PullerModel.Detent, toViewController: UIViewController) -> PullerModel.Detent {
         
-        let largeHeight = screenHeight * PullerModel.Detent.large.value
         let defaultHeight = toViewController.view.intrinsicContentSize.height
         let hasDefaultHeight = defaultHeight != UIView.noIntrinsicMetric
         
         if detent.isFitContent && hasDefaultHeight {
             
-            var viewHeight = defaultHeight + safeAreaBottomInset
-            viewHeight = min(viewHeight, screenHeight)
-            if viewHeight > largeHeight, viewHeight < screenHeight {
-                viewHeight = largeHeight
-            }
-            let detentValue = viewHeight / screenHeight
-            let detent = PullerModel.Detent(rawValue: detentValue)
-            
+            let fitsContentDetent = pullerPresentationController?.makeFitsContentDetent(height: defaultHeight) ?? .large
             pullerPresentationController?.isFitContent = true
-            pullerPresentationController?.defaultViewHeight = viewHeight
-            pullerPresentationController?.apply(detents: [detent])
+            pullerPresentationController?.defaultViewHeight = screenHeight * fitsContentDetent.value
+            pullerPresentationController?.apply(detents: [fitsContentDetent])
             
-            return detent
+            return fitsContentDetent
             
         } else if detent.isFitContent {
             
