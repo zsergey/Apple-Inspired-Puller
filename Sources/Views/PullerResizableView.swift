@@ -7,7 +7,7 @@
 
 import UIKit
 
-final public class PullerResizableView: UIView {
+public class PullerResizableView: UIView {
     
     public var defaultHeight: CGFloat?
     

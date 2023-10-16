@@ -109,6 +109,14 @@ final public class PullerPresentationController: UIPresentationController {
     
     private var closeButton: UIButton?
     
+    private var pullerOffset: CGFloat {
+        model.hasDynamicHeight ? 0 : 6
+    }
+
+    private var pullerWidth: CGFloat {
+        UIDevice.current.userInterfaceIdiom == .pad ? max(screenWidth, screenHeight) * 0.4 : min(screenWidth, screenHeight)
+    }
+    
     // MARK: - Public methods
     
     public init(presentedViewController: UIViewController,
@@ -186,15 +194,20 @@ final public class PullerPresentationController: UIPresentationController {
 
         super.viewWillTransition(to: size, with: coordinator)
         
+        coordinator.animate { [weak self] _ in
+            self?.runTransition(size: size)
+        }
+    }
+    
+    private func runTransition(size: CGSize) {
         isRotatingDevice = true
-        guard let containerView = containerView,
-            let firstDetent = detents.first else {
+        guard let firstDetent = detents.first else {
             isRotatingDevice = false
             return
         }
         
-        screenWidth = containerView.frame.size.height
-        screenHeight = containerView.frame.size.width
+        screenWidth = size.width
+        screenHeight = size.height
 
         if isFitContent  {
             let detentValue = defaultViewHeight / screenHeight
@@ -203,17 +216,13 @@ final public class PullerPresentationController: UIPresentationController {
             minimumPullerHeight = calcHeight(detent: detent)
             
             if selectedDetent != .zero {
-                DispatchQueue.main.async {
-                    self.selectedDetent = detent
-                }
+                selectedDetent = detent
             }
         } else {
             minimumPullerHeight = calcHeight(detent: firstDetent)
         }
         
-        DispatchQueue.main.async {
-            self.adjustHeightByTransition()
-        }
+        adjustHeightByTransition()
     }
     
     public override func traitCollectionDidChange(_ previousTraitCollection: UITraitCollection?) {
@@ -633,7 +642,13 @@ final public class PullerPresentationController: UIPresentationController {
                                     decelerationRate: model.decelerationRate)
         let xRest = toView.frame.origin.x + distance
         
-        let x = xRest > screenWidth / 2 ? screenWidth : 0
+        let x: CGFloat
+        if xRest > screenWidth / 2 {
+            x = screenWidth
+        } else {
+            x = (screenWidth - pullerWidth) / 2 + pullerOffset
+        }
+        
         let isGoingToDismiss = x == screenWidth
         
         if isGoingToDismiss {
@@ -777,10 +792,8 @@ final public class PullerPresentationController: UIPresentationController {
     }
     
     private func calcBody() -> (x: CGFloat, width: CGFloat, inset: CGFloat) {
-        let offset: CGFloat = model.hasDynamicHeight ? 0 : 6
-        let width: CGFloat = UIDevice.current.userInterfaceIdiom == .pad ? max(screenWidth, screenHeight) * 0.4 : min(screenWidth, screenHeight)
-        let x: CGFloat = (screenWidth - width) / 2
-        return (x + offset, width - offset * 2, offset)
+        let x: CGFloat = (screenWidth - pullerWidth) / 2
+        return (x + pullerOffset, pullerWidth - pullerOffset * 2, pullerOffset)
     }
     
     private func adjustHeight(y: CGFloat) -> CGRect {

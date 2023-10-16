@@ -121,8 +121,6 @@ final class PullerAnimationController: NSObject {
             transitionContext.completeTransition(!transitionContext.transitionWasCancelled)
             
             self.model.onDidDismiss?()
-            
-            self.viewController?.pullerTransitioningDelegate = nil
         }
     }
     
