@@ -59,6 +59,11 @@ public struct PullerModel {
     /// It calls when a puller did dismiss.
     public var onDidDismiss: (() -> Void)?
     
+    /// Inset of a puller in the style of `AirPods Pro`.
+    public var inset: CGFloat {
+        hasDynamicHeight ? 0.0 : 6.0
+    }
+    
     public init(animator: PullerAnimator = .default,
                 detents: [Detent],
                 cornerRadius: CGFloat = 16,

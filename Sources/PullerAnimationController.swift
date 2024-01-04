@@ -38,7 +38,7 @@ final class PullerAnimationController: NSObject {
         previousCornerRadius = fromViewController.view.layer.cornerRadius
 
         let adjustedDetent = adjustDetent(detent, toViewController: toViewController)
-        let viewHeight = screenHeight * adjustedDetent.value
+        let viewHeight = screenHeight * adjustedDetent.value - model.inset
         let frame = toViewController.view.frame
         CATransaction.disableAnimations {
             toViewController.view.frame = CGRect(origin: frame.origin, size: CGSize(width: frame.size.width, height: viewHeight))
@@ -49,8 +49,7 @@ final class PullerAnimationController: NSObject {
                 return
             }
 
-            let offset: CGFloat = self.model.hasDynamicHeight ? 0 : 6
-            toViewController.view.frame.origin.y = self.screenHeight - viewHeight - offset
+            toViewController.view.frame.origin.y = self.screenHeight - viewHeight - model.inset
             
             if self.model.isModalInPresentation {
                 UIImpactFeedbackGenerator(style: .light).impactOccurred()

@@ -111,10 +111,6 @@ final public class PullerPresentationController: UIPresentationController {
     
     private var closeButton: UIButton?
     
-    private var pullerOffset: CGFloat {
-        model.hasDynamicHeight ? 0 : 6
-    }
-
     private var pullerWidth: CGFloat {
         UIDevice.current.userInterfaceIdiom == .pad ? max(screenWidth, screenHeight) * 0.4 : min(screenWidth, screenHeight)
     }
@@ -284,6 +280,7 @@ final public class PullerPresentationController: UIPresentationController {
             currentPullerHeight = calcHeight(detent: firstDetent)
             minimumPullerHeight = currentPullerHeight
             selectedDetent = firstDetent
+            previousDetent = firstDetent
         }
     }
     
@@ -668,7 +665,7 @@ final public class PullerPresentationController: UIPresentationController {
         if xRest > screenWidth / 2 {
             x = screenWidth
         } else {
-            x = (screenWidth - pullerWidth) / 2 + pullerOffset
+            x = (screenWidth - pullerWidth) / 2 + model.inset
         }
         
         let isGoingToDismiss = x == screenWidth
@@ -815,7 +812,7 @@ final public class PullerPresentationController: UIPresentationController {
     
     private func calcBody() -> (x: CGFloat, width: CGFloat, inset: CGFloat) {
         let x = (screenWidth - pullerWidth) / 2
-        return (x + pullerOffset, pullerWidth - pullerOffset * 2, pullerOffset)
+        return (x + model.inset, pullerWidth - model.inset * 2, model.inset)
     }
     
     private func adjustHeight(y: CGFloat) -> CGRect {
