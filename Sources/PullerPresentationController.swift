@@ -134,10 +134,8 @@ final public class PullerPresentationController: UIPresentationController {
         let largeHeight = screenHeight * PullerModel.Detent.large.value
         
         var viewHeight = height + safeAreaBottomInset
-        viewHeight = min(viewHeight, screenHeight)
-        if viewHeight > largeHeight, viewHeight < screenHeight {
-            viewHeight = largeHeight
-        }
+        viewHeight = min(viewHeight, largeHeight)
+
         let detentValue = viewHeight / screenHeight
         let detent = PullerModel.Detent(rawValue: detentValue)
         return detent

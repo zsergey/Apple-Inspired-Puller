@@ -132,9 +132,17 @@ final class PullerAnimationController: NSObject {
             let fitsContentDetent = pullerPresentationController?.makeFitsContentDetent(height: defaultHeight) ?? .large
             pullerPresentationController?.isFitContent = true
             pullerPresentationController?.defaultViewHeight = screenHeight * fitsContentDetent.value
-            pullerPresentationController?.apply(detents: [fitsContentDetent])
             
-            return fitsContentDetent
+            var detents = [fitsContentDetent]
+            for detent in model.detents {
+                if !detent.isFitContent && detent.value < fitsContentDetent.value {
+                    detents.append(detent)
+                }
+            }
+            detents = detents.sorted(by: <)
+            pullerPresentationController?.apply(detents: detents)
+             
+            return detents.first ?? fitsContentDetent
             
         } else if detent.isFitContent {
             
