@@ -44,7 +44,7 @@ final class AdaptableViewController: UIViewController {
     
     private func setupPipButton() {
         let button = UIButton(type: .custom)
-        var image = UIImage(named: "PictureInPictureOutButton")
+        let image = UIImage(named: "PictureInPictureOutButton")
         button.setImage(image, for: .normal)
         button.addTarget(self, action: #selector(pipButtonTapped), for: .touchUpInside)
         view.addSubview(button)
@@ -65,7 +65,7 @@ final class AdaptableViewController: UIViewController {
         
         isMinimized = !isMinimized
         
-        var image = isMinimized ? UIImage(named: "PictureInPictureOutButton") : UIImage(named: "PictureInPictureButton")
+        let image = isMinimized ? UIImage(named: "PictureInPictureOutButton") : UIImage(named: "PictureInPictureButton")
         pipButton.setImage(image, for: .normal)
     }
     

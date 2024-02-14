@@ -7,12 +7,12 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		AD035E222ADD305800742FBC /* Puller in Frameworks */ = {isa = PBXBuildFile; productRef = AD035E212ADD305800742FBC /* Puller */; };
 		AD2301842ADD242A008000D1 /* AdaptableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD2301832ADD242A008000D1 /* AdaptableViewController.swift */; };
 		AD2E72FF29F8FB0500E9C7EF /* ImageViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD2E72FE29F8FB0500E9C7EF /* ImageViewController.swift */; };
 		AD2E730129F8FE3700E9C7EF /* ImageContentViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD2E730029F8FE3700E9C7EF /* ImageContentViewController.swift */; };
 		AD2FDE74299D20EB007FA7B1 /* AppleSheet.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD2FDE73299D20EB007FA7B1 /* AppleSheet.swift */; };
 		AD30F2F429CB4C4E0056BB40 /* UISegmentedControlExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD30F2F329CB4C4E0056BB40 /* UISegmentedControlExtensions.swift */; };
+		AD478CA22B7CE078004765EA /* Puller in Frameworks */ = {isa = PBXBuildFile; productRef = AD478CA12B7CE078004765EA /* Puller */; };
 		ADCBFD6329E9393700A956AC /* SwiftUIViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = ADCBFD6229E9393700A956AC /* SwiftUIViewController.swift */; };
 		ADCC4B3529CB126E00527E3C /* AppleDetent.swift in Sources */ = {isa = PBXBuildFile; fileRef = ADCC4B3429CB126E00527E3C /* AppleDetent.swift */; };
 		ADCC4B6029CB340400527E3C /* MainViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = ADCC4B5529CB340400527E3C /* MainViewController.swift */; };
@@ -58,7 +58,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				AD035E222ADD305800742FBC /* Puller in Frameworks */,
+				AD478CA22B7CE078004765EA /* Puller in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -158,7 +158,7 @@
 			);
 			name = AppleInspiredPuller;
 			packageProductDependencies = (
-				AD035E212ADD305800742FBC /* Puller */,
+				AD478CA12B7CE078004765EA /* Puller */,
 			);
 			productName = SheetsByApple;
 			productReference = ADCD802B299BD2FD006713AA /* AppleInspiredPuller.app */;
@@ -172,7 +172,7 @@
 			attributes = {
 				BuildIndependentTargetsInParallel = 1;
 				LastSwiftUpdateCheck = 1420;
-				LastUpgradeCheck = 1420;
+				LastUpgradeCheck = 1500;
 				ORGANIZATIONNAME = "";
 				TargetAttributes = {
 					ADCD802A299BD2FD006713AA = {
@@ -191,7 +191,7 @@
 			);
 			mainGroup = ADCD8022299BD2FD006713AA;
 			packageReferences = (
-				AD035E202ADD305800742FBC /* XCRemoteSwiftPackageReference "Apple-Inspired-Puller" */,
+				AD478CA02B7CE078004765EA /* XCRemoteSwiftPackageReference "Apple-Inspired-Puller" */,
 			);
 			productRefGroup = ADCD802C299BD2FD006713AA /* Products */;
 			projectDirPath = "";
@@ -296,6 +296,7 @@
 				DEBUG_INFORMATION_FORMAT = dwarf;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				ENABLE_TESTABILITY = YES;
+				ENABLE_USER_SCRIPT_SANDBOXING = YES;
 				GCC_C_LANGUAGE_STANDARD = gnu11;
 				GCC_DYNAMIC_NO_PIC = NO;
 				GCC_NO_COMMON_BLOCKS = YES;
@@ -356,6 +357,7 @@
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				ENABLE_NS_ASSERTIONS = NO;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_USER_SCRIPT_SANDBOXING = YES;
 				GCC_C_LANGUAGE_STANDARD = gnu11;
 				GCC_NO_COMMON_BLOCKS = YES;
 				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
@@ -461,7 +463,7 @@
 /* End XCConfigurationList section */
 
 /* Begin XCRemoteSwiftPackageReference section */
-		AD035E202ADD305800742FBC /* XCRemoteSwiftPackageReference "Apple-Inspired-Puller" */ = {
+		AD478CA02B7CE078004765EA /* XCRemoteSwiftPackageReference "Apple-Inspired-Puller" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/zsergey/Apple-Inspired-Puller.git";
 			requirement = {
@@ -472,9 +474,9 @@
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
-		AD035E212ADD305800742FBC /* Puller */ = {
+		AD478CA12B7CE078004765EA /* Puller */ = {
 			isa = XCSwiftPackageProductDependency;
-			package = AD035E202ADD305800742FBC /* XCRemoteSwiftPackageReference "Apple-Inspired-Puller" */;
+			package = AD478CA02B7CE078004765EA /* XCRemoteSwiftPackageReference "Apple-Inspired-Puller" */;
 			productName = Puller;
 		};
 /* End XCSwiftPackageProductDependency section */

@@ -34,7 +34,7 @@ final public class PullerPresentationController: UIPresentationController {
     }
     
     private enum ScrollDirection {
-        case top
+        case up
         case stop
         case down
     }
@@ -45,7 +45,7 @@ final public class PullerPresentationController: UIPresentationController {
     
     private var panGestureRecognizer: UIPanGestureRecognizer?
     private var dimmingView: PullerDimmingView?
-    private lazy var shadowView: PullerShadowView = { PullerShadowView() }()
+    private lazy var shadowView = PullerShadowView()
     private var shadow: Shadow = .default
     private var fromView: UIView { presentingViewController.view }
     private var fromViewController: UIViewController { presentingViewController }
@@ -65,9 +65,11 @@ final public class PullerPresentationController: UIPresentationController {
     private var internalSelectedDetent: PullerModel.Detent = .zero
     private var detents: [PullerModel.Detent] { isKeyboardVisible ? keyboardDetents : standardDetents }
     
-    private var startedTouchPoint: CGPoint = .zero
-    private var startedTouchDetent: PullerModel.Detent = .zero
-    
+    private var pointAtBeginningOfTouch: CGPoint = .zero
+    private var pointOfMoving: CGPoint = .zero
+    private var detentAtBeginningOfTouch: PullerModel.Detent = .zero
+    private var lastTransformOfToView: CGAffineTransform = .identity
+
     private var transformObservation: NSKeyValueObservation?
     private var toFrameObservation: NSKeyValueObservation?
     private var fromFrameObservation: NSKeyValueObservation?
@@ -79,7 +81,7 @@ final public class PullerPresentationController: UIPresentationController {
     private var scrollViewContentInsetObservation: NSKeyValueObservation?
     private var scrollViewYOffset: CGFloat = 0
     private var currentContentInsetTop: CGFloat = 0
-    private var isScrollViewAtTopStarted: Bool = true
+    private var isScrollViewAtTopAtBeginningOfTouch: Bool = true
     private var isScrollViewAtTop: Bool {
         (scrollView?.contentInset.top ?? 0) + scrollViewYOffset <= 0
     }
@@ -225,7 +227,7 @@ final public class PullerPresentationController: UIPresentationController {
         screenWidth = size.width
         screenHeight = size.height
 
-        if isFitContent  {
+        if isFitContent {
             let detentValue = defaultViewHeight / screenHeight
             let detent = PullerModel.Detent(rawValue: detentValue)
             apply(detents: [detent])
@@ -477,8 +479,6 @@ final public class PullerPresentationController: UIPresentationController {
     
     private func makePanGestureRecognizer() -> UIPanGestureRecognizer {
         let panGesture = UIPanGestureRecognizer(target: self, action: #selector(handlePanGesture(_:)))
-        panGesture.minimumNumberOfTouches = 1
-        panGesture.maximumNumberOfTouches = 1
         panGesture.delegate = self
         return panGesture
     }
@@ -588,29 +588,30 @@ final public class PullerPresentationController: UIPresentationController {
         
     @objc private func handlePanGesture(_ gesture: UIPanGestureRecognizer) {
                     
-        let touchPoint = gesture.location(in: toView)
-        
         if gesture.state == .began {
-            handleBeginGesture(gesture, at: touchPoint)
+            handleBeginGesture(gesture)
             return
         }
             
         guard isValidGesture else {
+            gesture.setTranslation(.zero, in: toView)
             return
         }
         
         switch gesture.state {
         case .changed:
-            isHorizontal ? handleHorizontalGesture(gesture, at: touchPoint) :
-                           handleVerticalGesture(gesture, at: touchPoint)
+            isHorizontal ? handleHorizontalGesture(gesture) :
+                           handleVerticalGesture(gesture)
         case .ended, .cancelled:
             isHorizontal ? handleEndHorizontalGesture(gesture) :
                            handleEndVerticalGesture(gesture)
         default: break
         }
+        
+        gesture.setTranslation(.zero, in: toView)
     }
 
-    private func handleBeginGesture(_ gesture: UIPanGestureRecognizer, at touchPoint: CGPoint) {
+    private func handleBeginGesture(_ gesture: UIPanGestureRecognizer) {
         if panGestureSource == .view {
             needsScrollingPuller = true
         }
@@ -619,10 +620,12 @@ final public class PullerPresentationController: UIPresentationController {
             onStartScrolling()
         }
         
-        isScrollViewAtTopStarted = isScrollViewAtTop
-        startedTouchPoint = touchPoint
-        startedTouchDetent = nearestDetent(to: toView.frame.origin.y)
-
+        pointAtBeginningOfTouch = gesture.location(in: toView)
+        isScrollViewAtTopAtBeginningOfTouch = isScrollViewAtTop
+        detentAtBeginningOfTouch = nearestDetent(to: toView.frame.origin.y)
+        pointOfMoving = CGPoint(x: 0, y: calcPosition(detent: detentAtBeginningOfTouch))
+        lastTransformOfToView = toView.transform
+        
         guard isPhone && canBeDismissedHorizontally else {
             return
         }
@@ -639,16 +642,21 @@ final public class PullerPresentationController: UIPresentationController {
         }
     }
 
-    private func handleHorizontalGesture(_ gesture: UIPanGestureRecognizer,
-                                         at touchPoint: CGPoint) {
+    private func handleHorizontalGesture(_ gesture: UIPanGestureRecognizer) {
         let translation = gesture.translation(in: toView)
-        
-        guard translation.x >= 0 else {
-            return
-        }
+        pointOfMoving.x += translation.x
+
+        let isBouncing = pointOfMoving.x < 0
         
         CATransaction.disableAnimations {
-            toView.transform = CGAffineTransform(translationX: translation.x, y: 0)
+            if isBouncing {
+                let exponent: CGFloat = 0.7
+                let offset = -pow(abs(pointOfMoving.x), exponent)
+                toView.transform = lastTransformOfToView.concatenating(CGAffineTransform(translationX: offset, y: 0))
+            } else {
+                toView.transform = toView.transform.concatenating(CGAffineTransform(translationX: translation.x, y: 0))
+                lastTransformOfToView = toView.transform
+            }
         }
     }
 
@@ -685,9 +693,8 @@ final public class PullerPresentationController: UIPresentationController {
             self?.isRunningHorizontalAnimation = false
         }
     }
-
-    private func handleVerticalGesture(_ gesture: UIPanGestureRecognizer,
-                                       at touchPoint: CGPoint) {
+    
+    private func handleVerticalGesture(_ gesture: UIPanGestureRecognizer) {
         
         guard let firstDetent = detents.first,
               let lastDetent = detents.last else {
@@ -695,54 +702,36 @@ final public class PullerPresentationController: UIPresentationController {
         }
         
         guard needsScrollingPuller else {
-            startedTouchPoint = touchPoint
-            startedTouchDetent = nearestDetent(to: toView.frame.origin.y)
-            gesture.setTranslation(.zero, in: toView)
             return
         }
         
         let translation = gesture.translation(in: toView)
-        let changedY = calcPosition(detent: startedTouchDetent) + translation.y
+        pointOfMoving.y += translation.y
         
-        let isCrossingFirstDetent = changedY > calcPosition(detent: firstDetent)
-        let isCrossingLastDetent = changedY < calcPosition(detent: lastDetent)
+        let firstDetentY = calcPosition(detent: firstDetent)
+        let lastDetentY = calcPosition(detent: lastDetent)
+        let isCrossingFirstDetent = pointOfMoving.y > firstDetentY
+        let isCrossingLastDetent = pointOfMoving.y < lastDetentY
         
-        let isBouncing = (model.isModalInPresentation && isCrossingFirstDetent) || isCrossingLastDetent
+        let isCrossingEdgeDetents = (model.isModalInPresentation && isCrossingFirstDetent) || isCrossingLastDetent
         
-        if !isBouncing {
-            CATransaction.disableAnimations {
-                toView.transform = CGAffineTransform(translationX: 0, y: translation.y)
-                toView.frame = adjustHeight(y: toView.frame.origin.y)
-            }
-            return
-        }
-        
-        let closestDetent = nearestDetent(to: changedY)
-        if calcPosition(detent: startedTouchDetent) != calcPosition(detent: closestDetent) {
-            startedTouchPoint = touchPoint
-            startedTouchDetent = closestDetent
-            CATransaction.disableAnimations {
-                toView.transform = .identity
-                toView.frame.origin.y = calcPosition(detent: closestDetent)
-            }
-            gesture.setTranslation(.zero, in: toView)
-            return
-        }
-        
-        var offset = touchPoint.y - startedTouchPoint.y
+        var offset = isCrossingLastDetent ? (pointOfMoving.y - lastDetentY) : (pointOfMoving.y - firstDetentY)
         let exponent: CGFloat = model.hasDynamicHeight ? 0.7 : 0.8
         offset = offset > 0 ? pow(offset, exponent) : -pow(-offset, exponent)
         
         let isMovingByView = panGestureSource == .view
+        let isMovingUpByScrollView = panGestureSource == .scrollView && scrollDirection == .up
         let isMovingDownByScrollView = panGestureSource == .scrollView && scrollDirection == .down && isScrollViewAtTop && offset > 0
-        let needsBouncingPuller = isMovingByView || isMovingDownByScrollView
+        let doesMovementAffectBounce = isMovingByView || isMovingDownByScrollView || isMovingUpByScrollView
+        
+        let isBouncing = isCrossingEdgeDetents && doesMovementAffectBounce
         
         CATransaction.disableAnimations {
-            if needsBouncingPuller {
-                toView.transform = CGAffineTransform(translationX: 0, y: offset)
+            if isBouncing {
+                toView.transform = lastTransformOfToView.concatenating(CGAffineTransform(translationX: 0, y: offset))
             } else {
-                toView.transform = .identity
-                toView.frame.origin.y = calcPosition(detent: startedTouchDetent)
+                toView.transform = toView.transform.concatenating(CGAffineTransform(translationX: 0, y: translation.y))
+                lastTransformOfToView = toView.transform
             }
             self.toView.frame = adjustHeight(y: toView.frame.origin.y)
         }
@@ -760,7 +749,7 @@ final public class PullerPresentationController: UIPresentationController {
         
         let closestDetent = nearestDetent(to: yRest)
         
-        if startedTouchDetent > closestDetent {
+        if detentAtBeginningOfTouch > closestDetent {
             toView.endEditing(true)
         }
         
@@ -1150,9 +1139,9 @@ extension PullerPresentationController {
             return
         }
         
-        scrollDirection = scrollView.contentOffset.y > scrollViewYOffset ? .top : .down
+        scrollDirection = scrollView.contentOffset.y > scrollViewYOffset ? .up : .down
         switch scrollDirection {
-        case .top:
+        case .up:
             expandPuller(scrollView)
         case .down:
             collapsePuller(scrollView)
@@ -1163,12 +1152,12 @@ extension PullerPresentationController {
     
     private func expandPuller(_ scrollView: UIScrollView) {
         
-        let toDetent = (model.scrollingExpandsWhenScrolledToEdge ? detents.last : nil) ?? startedTouchDetent
+        let toDetent = (model.scrollingExpandsWhenScrolledToEdge ? detents.last : nil) ?? detentAtBeginningOfTouch
         let isReachedDetent = Int(toView.frame.minY) <= Int(calcPosition(detent: toDetent))
         if isReachedDetent {
             trackScrolling(scrollView)
             setNeedsScrollingPuller(false)
-        } else if isScrollViewAtTopStarted {
+        } else if isScrollViewAtTopAtBeginningOfTouch {
             stopScrolling(scrollView)
             setNeedsScrollingPuller(true)
         } else {
