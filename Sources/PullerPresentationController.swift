@@ -33,9 +33,8 @@ final public class PullerPresentationController: UIPresentationController {
         case view
     }
     
-    private enum ScrollDirection {
+    private enum MovingDirection {
         case up
-        case stop
         case down
     }
     
@@ -43,7 +42,6 @@ final public class PullerPresentationController: UIPresentationController {
     
     private var model: PullerModel
     
-    private var panGestureRecognizer: UIPanGestureRecognizer?
     private var dimmingView: PullerDimmingView?
     private lazy var shadowView = PullerShadowView()
     private var shadow: Shadow = .default
@@ -65,7 +63,6 @@ final public class PullerPresentationController: UIPresentationController {
     private var internalSelectedDetent: PullerModel.Detent = .zero
     private var detents: [PullerModel.Detent] { isKeyboardVisible ? keyboardDetents : standardDetents }
     
-    private var pointAtBeginningOfTouch: CGPoint = .zero
     private var pointOfMoving: CGPoint = .zero
     private var detentAtBeginningOfTouch: PullerModel.Detent = .zero
     private var lastTransformOfToView: CGAffineTransform = .identity
@@ -74,19 +71,20 @@ final public class PullerPresentationController: UIPresentationController {
     private var toFrameObservation: NSKeyValueObservation?
     private var fromFrameObservation: NSKeyValueObservation?
 
-    private var needsScrollingPuller = false
+    private var needsMovingPuller = false
     private var scrollView: UIScrollView?
     private var scrollViewContentInsetBottom: CGFloat = .zero
-    private var scrollViewObservation: NSKeyValueObservation?
-    private var scrollViewContentInsetObservation: NSKeyValueObservation?
-    private var scrollViewYOffset: CGFloat = 0
     private var currentContentInsetTop: CGFloat = 0
     private var isScrollViewAtTopAtBeginningOfTouch: Bool = true
     private var isScrollViewAtTop: Bool {
-        (scrollView?.contentInset.top ?? 0) + scrollViewYOffset <= 0
+        (scrollView?.contentInset.top ?? 0) + (scrollView?.contentOffset.y ?? 0) <= 0
     }
-    private var isProgrammaticallyScrolling = false
-    
+    private var isMovingDownByScrollView: Bool {
+        panGestureSource == .scrollView && movingDirection == .down
+    }
+    private var isMovingUpByScrollView: Bool {
+        panGestureSource == .scrollView && movingDirection == .up
+    }
     private lazy var screenWidth = { UIScreen.main.bounds.width }()
     private lazy var screenHeight = { UIScreen.main.bounds.height }()
     private var minimumPullerHeight: CGFloat = 0
@@ -101,7 +99,8 @@ final public class PullerPresentationController: UIPresentationController {
     private var isHorizontal: Bool { pullerMovement == .horizontal }
     private var isInternalDismissing: Bool = false
     private var panGestureSource: PanGestureSource = .view
-    private var scrollDirection: ScrollDirection = .stop
+    private var movingDirection: MovingDirection = .up
+    private var scrollViewHorizontalContentOffset: CGPoint = .zero
     
     private var dragIndicatorView: PullerDragIndicatorView?
     private let dragIndicatorSize = CGSize(width: 36.0, height: 5.0)
@@ -360,29 +359,11 @@ final public class PullerPresentationController: UIPresentationController {
     private func setupScrollView() {
         scrollView = toViewController.findScrollView()
         scrollViewContentInsetBottom = scrollView?.contentInset.bottom ?? .zero
-
-        scrollViewObservation?.invalidate()
-        scrollViewContentInsetObservation?.invalidate()
-
-        scrollViewContentInsetObservation = scrollView?.observe(\.contentInset, options: .new) { [weak self] scrollView, change in
-            guard let self = self else {
-                return
-            }
-            let delta = scrollView.contentInset.top - self.currentContentInsetTop
-            self.scrollViewYOffset -= delta
-            self.currentContentInsetTop = scrollView.contentInset.top
-        }
-
-        scrollViewObservation = scrollView?.observe(\.contentOffset, options: .new) { [weak self] scrollView, change in
-            guard let self = self else {
-                return
-            }
-
-            if !self.isProgrammaticallyScrolling {
-                self.updateScrollView(scrollView, change: change)
-            }
-        }
-
+        
+        scrollView?.panGestureRecognizer.addTarget(self, action: #selector(handlePanGesture(_:)))
+        scrollView?.panGestureRecognizer.delaysTouchesBegan = false
+        scrollView?.delaysContentTouches = false
+        
         if let tableView = scrollView as? UITableView,
            tableView.refreshControl != nil {
             hasRefreshControl = true
@@ -399,7 +380,6 @@ final public class PullerPresentationController: UIPresentationController {
 
         let panGestureRecognizer = makePanGestureRecognizer()
         toView.addGestureRecognizer(panGestureRecognizer)
-        self.panGestureRecognizer = panGestureRecognizer
         
         if model.hasDynamicHeight {
             toView.layer.maskedCorners = [.layerMinXMinYCorner, .layerMaxXMinYCorner]
@@ -479,7 +459,7 @@ final public class PullerPresentationController: UIPresentationController {
     
     private func makePanGestureRecognizer() -> UIPanGestureRecognizer {
         let panGesture = UIPanGestureRecognizer(target: self, action: #selector(handlePanGesture(_:)))
-        panGesture.delegate = self
+        panGesture.delaysTouchesBegan = true
         return panGesture
     }
     
@@ -594,7 +574,9 @@ final public class PullerPresentationController: UIPresentationController {
         }
             
         guard isValidGesture else {
-            gesture.setTranslation(.zero, in: toView)
+            setTranslationToZero(gesture)
+            needsMovingPuller = false
+            gesture.state = .cancelled
             return
         }
         
@@ -608,29 +590,42 @@ final public class PullerPresentationController: UIPresentationController {
         default: break
         }
         
-        gesture.setTranslation(.zero, in: toView)
+        setTranslationToZeroIfNeeded(gesture)
     }
-
-    private func handleBeginGesture(_ gesture: UIPanGestureRecognizer) {
-        if panGestureSource == .view {
-            needsScrollingPuller = true
-        }
-
-        if panGestureSource == .scrollView {
-            onStartScrolling()
-        }
+    
+    private func setTranslationToZero(_ gesture: UIPanGestureRecognizer) {
         
-        pointAtBeginningOfTouch = gesture.location(in: toView)
-        isScrollViewAtTopAtBeginningOfTouch = isScrollViewAtTop
-        detentAtBeginningOfTouch = nearestDetent(to: toView.frame.origin.y)
-        pointOfMoving = CGPoint(x: 0, y: calcPosition(detent: detentAtBeginningOfTouch))
-        lastTransformOfToView = toView.transform
+        gesture.setTranslation(.zero, in: gesture.view)
+    }
+    
+    private func setTranslationToZeroIfNeeded(_ gesture: UIPanGestureRecognizer) {
+
+        switch pullerMovement {
+        case .vertical:
+
+            if panGestureSource == .view ||
+                (panGestureSource == .scrollView && needsMovingPuller) {
+                
+                setTranslationToZero(gesture)
+            }
+
+        case .horizontal:
+            
+            setTranslationToZero(gesture)
+        }
+    }
+    
+    private func handleBeginGesture(_ gesture: UIPanGestureRecognizer) {
+        
+        setupMovingDirection(gesture)
+        setupPanGestureSource(gesture)
+        setupBeginGestureValues()
         
         guard isPhone && canBeDismissedHorizontally else {
             return
         }
         
-        let velocity = gesture.velocity(in: toView)
+        let velocity = gesture.velocity(in: gesture.view)
         let isHorizontal = abs(velocity.x) > abs(velocity.y)
         
         if (isRunningHorizontalAnimation && !isHorizontal) ||
@@ -639,11 +634,55 @@ final public class PullerPresentationController: UIPresentationController {
         } else {
             isValidGesture = true
             pullerMovement = isHorizontal ? .horizontal : .vertical
+            scrollViewHorizontalContentOffset = scrollView?.contentOffset ?? .zero
         }
     }
+    
+    private func setupMovingDirection(_ gesture: UIPanGestureRecognizer) {
+        
+        movingDirection = gesture.velocity(in: gesture.view).y < 0 ? .up : .down
+    }
+    
+    private func setupBeginGestureValues() {
+        
+        detentAtBeginningOfTouch = nearestDetent(to: toView.frame.origin.y)
+        pointOfMoving = CGPoint(x: 0, y: calcPosition(detent: detentAtBeginningOfTouch))
+        lastTransformOfToView = toView.transform
+    }
 
+    private func setupPanGestureSource(_ gesture: UIPanGestureRecognizer) {
+        
+        panGestureSource = .view
+        let point = gesture.location(in: toView)
+        var targetView = toView.hitTest(point, with: nil)
+        while targetView?.superview != nil {
+            
+            if targetView == scrollView {
+                panGestureSource = .scrollView
+                break
+            }
+            targetView = targetView?.superview
+        }
+        
+        guard panGestureSource == .scrollView else {
+            
+            needsMovingPuller = true
+            return
+        }
+        
+        isScrollViewAtTopAtBeginningOfTouch = isScrollViewAtTop
+        setTranslationToZero(gesture)
+
+        if movingDirection == .up {
+            needsMovingPuller = model.scrollingExpandsWhenScrolledToEdge && isScrollViewAtTop
+        } else {
+            needsMovingPuller = isScrollViewAtTop && !hasRefreshControl
+        }
+    }
+    
     private func handleHorizontalGesture(_ gesture: UIPanGestureRecognizer) {
-        let translation = gesture.translation(in: toView)
+
+        let translation = gesture.translation(in: gesture.view)
         pointOfMoving.x += translation.x
 
         let isBouncing = pointOfMoving.x < 0
@@ -661,8 +700,8 @@ final public class PullerPresentationController: UIPresentationController {
     }
 
     private func handleEndHorizontalGesture(_ gesture: UIPanGestureRecognizer) {
-        
-        let velocity = gesture.velocity(in: toView)
+
+        let velocity = gesture.velocity(in: gesture.view)
         let distance = distanceRest(initialVelocity: velocity.x,
                                     decelerationRate: model.decelerationRate)
         let xRest = toView.frame.origin.x + distance
@@ -673,6 +712,8 @@ final public class PullerPresentationController: UIPresentationController {
         } else {
             x = (screenWidth - pullerWidth) / 2 + model.inset
         }
+        
+        scrollView?.contentOffset = scrollViewHorizontalContentOffset
         
         let isGoingToDismiss = x == screenWidth
         
@@ -696,17 +737,35 @@ final public class PullerPresentationController: UIPresentationController {
     
     private func handleVerticalGesture(_ gesture: UIPanGestureRecognizer) {
         
+        setupMovingDirection(gesture)
+        
         guard let firstDetent = detents.first,
               let lastDetent = detents.last else {
             return
         }
         
-        guard needsScrollingPuller else {
+        if isMovingDownByScrollView,
+            isScrollViewAtTopAtBeginningOfTouch,
+            isScrollViewAtTop,
+            !needsMovingPuller,
+            !hasRefreshControl {
+            
+            setupBeginGestureValues()
+            needsMovingPuller = true
+            setTranslationToZero(gesture)
             return
         }
         
-        let translation = gesture.translation(in: toView)
+        var translation = gesture.translation(in: gesture.view)
         pointOfMoving.y += translation.y
+        
+        guard needsMovingPuller else {
+            return
+        }
+        
+        if panGestureSource == .scrollView {
+            scrollView?.contentOffset.y = -(scrollView?.contentInset.top ?? 0)
+        }
         
         let firstDetentY = calcPosition(detent: firstDetent)
         let lastDetentY = calcPosition(detent: lastDetent)
@@ -720,11 +779,16 @@ final public class PullerPresentationController: UIPresentationController {
         offset = offset > 0 ? pow(offset, exponent) : -pow(-offset, exponent)
         
         let isMovingByView = panGestureSource == .view
-        let isMovingUpByScrollView = panGestureSource == .scrollView && scrollDirection == .up
-        let isMovingDownByScrollView = panGestureSource == .scrollView && scrollDirection == .down && isScrollViewAtTop && offset > 0
-        let doesMovementAffectBounce = isMovingByView || isMovingDownByScrollView || isMovingUpByScrollView
-        
+        let doesMovementAffectBounce = isMovingByView || (isMovingDownByScrollView && isScrollViewAtTop && offset > 0)
         let isBouncing = isCrossingEdgeDetents && doesMovementAffectBounce
+        
+        if isMovingUpByScrollView, isCrossingLastDetent {
+            let delta = lastDetentY - pointOfMoving.y
+            translation.y += delta
+            pointOfMoving.y += delta
+            setTranslationToZero(gesture)
+            needsMovingPuller = false
+        }
         
         CATransaction.disableAnimations {
             if isBouncing {
@@ -738,11 +802,12 @@ final public class PullerPresentationController: UIPresentationController {
     }
     
     private func handleEndVerticalGesture(_ gesture: UIPanGestureRecognizer) {
-        guard needsScrollingPuller else {
+        
+        guard needsMovingPuller else {
             return
         }
-        
-        let velocity = gesture.velocity(in: toView)
+
+        let velocity = gesture.velocity(in: gesture.view)
         let distance = distanceRest(initialVelocity: velocity.y,
                                     decelerationRate: model.decelerationRate)
         let yRest = toView.frame.origin.y + distance
@@ -835,12 +900,14 @@ final public class PullerPresentationController: UIPresentationController {
         isInternalDismissing = true
         pullerMovement = .vertical
         animationController?.pullerMovement = .vertical
+        keyboard.unsubscribeFromNotifications()
         toViewController.dismiss(animated: true)
     }
 
     private func dismissToViewControllerHorizontally() {
         isInternalDismissing = true
         animationController?.pullerMovement = .horizontal
+        keyboard.unsubscribeFromNotifications()
         toViewController.dismiss(animated: true)
     }
 
@@ -931,19 +998,16 @@ final public class PullerPresentationController: UIPresentationController {
             return
         }
         
-        guard let panGestureRecognizer = panGestureRecognizer,
-              let lastDetent = detents.last,
+        guard let lastDetent = detents.last,
               lastDetent.isExpanded else {
             setDefaultCornerRadius()
             return
         }
         
-        setFlexibleCornerRadiuses(panGestureRecognizer: panGestureRecognizer,
-                                  lastDetent: lastDetent)
+        setFlexibleCornerRadiuses(lastDetent: lastDetent)
     }
     
-    private func setFlexibleCornerRadiuses(panGestureRecognizer: UIPanGestureRecognizer,
-                                           lastDetent: PullerModel.Detent) {
+    private func setFlexibleCornerRadiuses(lastDetent: PullerModel.Detent) {
         let maxRadius: CGFloat = model.cornerRadius
         let minRadius: CGFloat = UIScreen.main.displayCornerRadius
         var toRadius: CGFloat
@@ -1080,126 +1144,5 @@ final public class PullerPresentationController: UIPresentationController {
 
         fromFrameObservation?.invalidate()
         fromFrameObservation = nil
-        
-        scrollViewObservation?.invalidate()
-        scrollViewObservation = nil
-        
-        scrollViewContentInsetObservation?.invalidate()
-        scrollViewContentInsetObservation = nil
-    }
-}
-
-// MARK: - UIGestureRecognizerDelegate
-
-extension PullerPresentationController: UIGestureRecognizerDelegate {
-    
-    public func gestureRecognizerShouldBegin(_ gestureRecognizer: UIGestureRecognizer) -> Bool {
-        panGestureSource = .view
-        return true
-    }
-    
-    public func gestureRecognizer(_ gestureRecognizer: UIGestureRecognizer,
-                                  shouldBeRequiredToFailBy otherGestureRecognizer: UIGestureRecognizer) -> Bool {
-        false
-    }
-    
-    public func gestureRecognizer(_ gestureRecognizer: UIGestureRecognizer,
-                                  shouldRecognizeSimultaneouslyWith otherGestureRecognizer: UIGestureRecognizer) -> Bool {
-        
-        let shouldRecognizeSimultaneously = gestureRecognizer.state != .changed && gestureRecognizer.state != .ended && otherGestureRecognizer.view == scrollView
-        
-        if shouldRecognizeSimultaneously {
-            panGestureSource = .scrollView
-            scrollDirection = .stop
-            needsScrollingPuller = false
-        }
-        return shouldRecognizeSimultaneously
-    }
-}
-
-// MARK: - UIScrollView support
-
-extension PullerPresentationController {
-    
-    func updateScrollView(_ scrollView: UIScrollView,
-                          change: NSKeyValueObservedChange<CGPoint>) {
-        
-        if isHorizontal {
-            stopScrolling(scrollView)
-            return
-        }
-        
-        guard scrollView.contentOffset.y != scrollViewYOffset else {
-            return
-        }
-        
-        if hasRefreshControl {
-            trackScrolling(scrollView)
-            setNeedsScrollingPuller(false)
-            return
-        }
-        
-        scrollDirection = scrollView.contentOffset.y > scrollViewYOffset ? .up : .down
-        switch scrollDirection {
-        case .up:
-            expandPuller(scrollView)
-        case .down:
-            collapsePuller(scrollView)
-        case .stop:
-            break
-        }
-    }
-    
-    private func expandPuller(_ scrollView: UIScrollView) {
-        
-        let toDetent = (model.scrollingExpandsWhenScrolledToEdge ? detents.last : nil) ?? detentAtBeginningOfTouch
-        let isReachedDetent = Int(toView.frame.minY) <= Int(calcPosition(detent: toDetent))
-        if isReachedDetent {
-            trackScrolling(scrollView)
-            setNeedsScrollingPuller(false)
-        } else if isScrollViewAtTopAtBeginningOfTouch {
-            stopScrolling(scrollView)
-            setNeedsScrollingPuller(true)
-        } else {
-            trackScrolling(scrollView)
-            setNeedsScrollingPuller(false)
-        }
-    }
-    
-    private func collapsePuller(_ scrollView: UIScrollView) {
-        
-        if scrollView.isScrolling && isScrollViewAtTop {
-            stopScrolling(scrollView)
-            setNeedsScrollingPuller(true)
-        } else {
-            trackScrolling(scrollView)
-            setNeedsScrollingPuller(isScrollViewAtTop)
-        }
-    }
-    
-    private func onStartScrolling() {
-        if let scrollView = scrollView,
-           scrollView.contentInset.top + scrollViewYOffset < 0 {
-            scrollViewYOffset = -scrollView.contentInset.top
-        }
-    }
-    
-    private func setNeedsScrollingPuller(_ value: Bool) {
-        guard panGestureSource == .scrollView else {
-            return
-        }
-        needsScrollingPuller = value
-    }
-    
-    private func stopScrolling(_ scrollView: UIScrollView) {
-        isProgrammaticallyScrolling = true
-        scrollView.setContentOffset(CGPoint(x: 0, y: scrollViewYOffset), animated: false)
-        DispatchQueue.main.async {
-            self.isProgrammaticallyScrolling = false
-        }
-    }
-    
-    private func trackScrolling(_ scrollView: UIScrollView) {
-        scrollViewYOffset = scrollView.contentOffset.y
     }
 }
