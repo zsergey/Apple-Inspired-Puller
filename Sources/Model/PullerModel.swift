@@ -64,6 +64,9 @@ public struct PullerModel {
         hasDynamicHeight ? 0.0 : 6.0
     }
     
+    /// Embedding view of `UIViewController` to `UIScrollView` when you use `fitsContent` detent in case of huge height of the view.
+    public var embeddingViewToScrollView: Bool
+
     public init(animator: PullerAnimator = .default,
                 detents: [Detent],
                 cornerRadius: CGFloat = 16,
@@ -76,7 +79,8 @@ public struct PullerModel {
                 dimmedAlpha: CGFloat = 0.4,
                 hasDynamicHeight: Bool = true,
                 hasCircleCloseButton: Bool = true,
-                supportsInteractivePopGesture: Bool = true) {
+                supportsInteractivePopGesture: Bool = true,
+                embeddingViewToScrollView: Bool = false) {
         self.detents = detents
         self.animator = animator
         self.cornerRadius = cornerRadius
@@ -90,6 +94,7 @@ public struct PullerModel {
         self.hasDynamicHeight = hasDynamicHeight
         self.hasCircleCloseButton = hasCircleCloseButton
         self.supportsInteractivePopGesture = supportsInteractivePopGesture
+        self.embeddingViewToScrollView = embeddingViewToScrollView
     }
 }
 

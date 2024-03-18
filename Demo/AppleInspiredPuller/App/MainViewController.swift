@@ -161,9 +161,15 @@ class MainViewController: UIViewController {
         if case .adaptable = pullerItem.type {
             hasCircleCloseButton = false
         }
+        var embeddingViewToScrollView = false
+        if case .text = pullerItem.type {
+            embeddingViewToScrollView = true
+        }
+        
         let pullerModel = presentationSettings.makePullerModel(detents: pullerItem.detents,
                                                                hasDynamicHeight: pullerItem.hasDynamicHeight,
-                                                               hasCircleCloseButton: hasCircleCloseButton)
+                                                               hasCircleCloseButton: hasCircleCloseButton,
+                                                               embeddingViewToScrollView: embeddingViewToScrollView)
         return pullerModel
     }
     

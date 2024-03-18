@@ -20,9 +20,14 @@ final public class PullerPresentationController: UIPresentationController {
         get { internalSelectedDetent }
     }
     
+    public lazy var toView: UIView = { presentedViewController.view }()
+
+    // MARK: - Private set properties
+
     var isFitContent: Bool = false
     var defaultViewHeight: CGFloat = 0
-    
+    var originalViewHeight: CGFloat = 0
+
     /// `PullerPresentationController` can modify the dismissal direction for `PullerAnimationController`.
     weak var animationController: PullerAnimationController?
     
@@ -47,7 +52,6 @@ final public class PullerPresentationController: UIPresentationController {
     private var shadow: Shadow = .default
     private var fromView: UIView { presentingViewController.view }
     private var fromViewController: UIViewController { presentingViewController }
-    private var toView: UIView { presentedViewController.view }
     private var toViewController: UIViewController { presentedViewController }
     private var isPhone: Bool { UIDevice.current.userInterfaceIdiom == .phone }
     private var isDialog: Bool { !model.hasDynamicHeight }
@@ -132,21 +136,28 @@ final public class PullerPresentationController: UIPresentationController {
     }
     
     public func makeFitsContentDetent(height: CGFloat) -> PullerModel.Detent {
-        let largeHeight = screenHeight * PullerModel.Detent.large.value
+        originalViewHeight = height
         
-        var viewHeight = height + safeAreaBottomInset
-        viewHeight = min(viewHeight, largeHeight)
-
-        let detentValue = viewHeight / screenHeight
-        let detent = PullerModel.Detent(rawValue: detentValue)
-        return detent
+        let height = height + safeAreaBottomInset
+        return makeFitsContentDetentLimitedToLarge(height: height)
+    }
+    
+    private func makeFitsContentDetentLimitedToLarge(height: CGFloat) -> PullerModel.Detent {
+        
+        let largeHeight = screenHeight * PullerModel.Detent.large.value
+        let viewHeight = min(height, largeHeight)
+        let detentValue = round(100 * viewHeight / screenHeight) / 100
+        return PullerModel.Detent(rawValue: detentValue)
     }
     
     public func setHeightThatMatches(detent: PullerModel.Detent) {
         let height = calcHeight(detent: detent)
         currentPullerHeight = height
         minimumPullerHeight = height
+        defaultViewHeight = height
         selectedDetent = detent
+        
+        (toView as? PullerContentView)?.scrollView.contentSize.height = originalViewHeight
     }
     
     public func apply(detents: [PullerModel.Detent]) {
@@ -169,6 +180,45 @@ final public class PullerPresentationController: UIPresentationController {
         updateCloseButton()
     }
     
+    public func embedViewToScrollView() {
+        
+        guard isFitContent, model.embeddingViewToScrollView,
+              originalViewHeight > defaultViewHeight,
+              let containerView else {
+            return
+        }
+        
+        CATransaction.disableAnimations {
+            toView.removeFromSuperview()
+            toFrameObservation?.invalidate()
+            toFrameObservation = nil
+            transformObservation?.invalidate()
+            transformObservation = nil
+            toView.gestureRecognizers?.removeAll()
+            closeButton?.removeFromSuperview()
+            closeButton = nil
+            dragIndicatorView?.removeFromSuperview()
+            dragIndicatorView = nil
+            
+            let pullerContentView = PullerContentView()
+            pullerContentView.backgroundColor = toView.backgroundColor
+            pullerContentView.contentView = toView
+            pullerContentView.scrollView.scrollIndicatorInsets = UIEdgeInsets(top: model.cornerRadius * 2, left: 0, bottom: 0, right: 0)
+            let contentSize = CGSize(width: toView.frame.size.width,
+                                     height: originalViewHeight)
+            pullerContentView.scrollView.contentSize = contentSize
+            pullerContentView.scrollView.addSubview(toView)
+            pullerContentView.scrollView.flashScrollIndicators()
+            setupScrollView(pullerContentView.scrollView)
+            
+            containerView.addSubview(pullerContentView)
+            toView = pullerContentView
+            setupToView(toView)
+            setupCloseButton()
+            setupDragIndicatorView()
+        }
+    }
+    
     deinit {
         
         keyboard.unsubscribeFromNotifications()
@@ -187,8 +237,9 @@ final public class PullerPresentationController: UIPresentationController {
     public override func presentationTransitionWillBegin() {
         super.presentationTransitionWillBegin()
         
-        setupDimmingView()
-        setupViews()
+        addViews()
+        setupToView(toView)
+        setupFromView()
         setupCloseButton()
         
         setupDragIndicatorView()
@@ -202,7 +253,10 @@ final public class PullerPresentationController: UIPresentationController {
     public override func presentationTransitionDidEnd(_ completed: Bool) {
         super.presentationTransitionDidEnd(completed)
         
-        setupScrollView()
+        if scrollView == nil {
+            setupScrollView(toViewController.findScrollView())
+        }
+        
         updateFirstDetentAsSelected()
     }
     
@@ -227,8 +281,8 @@ final public class PullerPresentationController: UIPresentationController {
         screenHeight = size.height
 
         if isFitContent {
-            let detentValue = defaultViewHeight / screenHeight
-            let detent = PullerModel.Detent(rawValue: detentValue)
+            
+            let detent = makeFitsContentDetentLimitedToLarge(height: defaultViewHeight)
             apply(detents: [detent])
             minimumPullerHeight = calcHeight(detent: detent)
             
@@ -297,14 +351,23 @@ final public class PullerPresentationController: UIPresentationController {
         }
     }
     
-    private func setupDimmingView() {
+    private func addViews() {
+        
         guard let containerView = containerView else {
             return
         }
+        
         let dimmingView = makeDimmingView()
         containerView.addSubview(dimmingView)
         dimmingView.pin(to: containerView)
         self.dimmingView = dimmingView
+        
+        containerView.addSubview(shadowView)
+        if #available(iOS 13.0, *) {
+            shadowView.overrideUserInterfaceStyle = toView.traitCollection.userInterfaceStyle
+        }
+        
+        containerView.addSubview(toView)
     }
     
     private func hideDragIndicatorView() {
@@ -356,8 +419,9 @@ final public class PullerPresentationController: UIPresentationController {
         }
     }
     
-    private func setupScrollView() {
-        scrollView = toViewController.findScrollView()
+    private func setupScrollView(_ scrollView: UIScrollView?) {
+        
+        self.scrollView = scrollView
         scrollViewContentInsetBottom = scrollView?.contentInset.bottom ?? .zero
         
         scrollView?.panGestureRecognizer.addTarget(self, action: #selector(handlePanGesture(_:)))
@@ -370,13 +434,9 @@ final public class PullerPresentationController: UIPresentationController {
         }
     }
     
-    private func setupViews() {
-        containerView?.addSubview(shadowView)
+    private func setupToView(_ toView: UIView) {
+
         shadowView.backgroundColor = toView.backgroundColor
-        if #available(iOS 13.0, *) {
-            shadowView.overrideUserInterfaceStyle = toView.traitCollection.userInterfaceStyle
-        }
-        containerView?.addSubview(toView)
 
         let panGestureRecognizer = makePanGestureRecognizer()
         toView.addGestureRecognizer(panGestureRecognizer)
@@ -387,8 +447,6 @@ final public class PullerPresentationController: UIPresentationController {
             toView.layer.maskedCorners = [.layerMinXMinYCorner, .layerMaxXMinYCorner,
                                           .layerMinXMaxYCorner, .layerMaxXMaxYCorner]
         }
-        fromView.layer.maskedCorners = [.layerMinXMinYCorner, .layerMaxXMinYCorner,
-                                        .layerMinXMaxYCorner, .layerMaxXMaxYCorner]
         
         toView.autoresizingMask = [.flexibleTopMargin, .flexibleLeftMargin, .flexibleRightMargin]
         
@@ -405,11 +463,6 @@ final public class PullerPresentationController: UIPresentationController {
             self.updateCloseButton()
         }
         
-        fromFrameObservation?.invalidate()
-        fromFrameObservation = fromView.observe(\.frame) { [weak self] _, _ in
-            self?.update3DScale()
-        }
-            
         transformObservation?.invalidate()
         transformObservation = toView.observe(\.transform) { [weak self] _, _ in
             guard let self = self else {
@@ -421,6 +474,17 @@ final public class PullerPresentationController: UIPresentationController {
             self.updateDimmingView()
             self.updateDragIndicatorView()
             self.updateCloseButton()
+        }
+    }
+    
+    private func setupFromView() {
+        
+        fromView.layer.maskedCorners = [.layerMinXMinYCorner, .layerMaxXMinYCorner,
+                                        .layerMinXMaxYCorner, .layerMaxXMaxYCorner]
+
+        fromFrameObservation?.invalidate()
+        fromFrameObservation = fromView.observe(\.frame) { [weak self] _, _ in
+            self?.update3DScale()
         }
     }
     

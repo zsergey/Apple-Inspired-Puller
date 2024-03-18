@@ -38,18 +38,19 @@ final class PullerAnimationController: NSObject {
         previousCornerRadius = fromViewController.view.layer.cornerRadius
 
         let adjustedDetent = adjustDetent(detent, toViewController: toViewController)
+        let toView = pullerPresentationController?.toView
         let viewHeight = screenHeight * adjustedDetent.value - model.inset
         let frame = toViewController.view.frame
         CATransaction.disableAnimations {
-            toViewController.view.frame = CGRect(origin: frame.origin, size: CGSize(width: frame.size.width, height: viewHeight))
+            toView?.frame = CGRect(origin: frame.origin, size: CGSize(width: frame.size.width, height: viewHeight))
         }
-
+        
         model.animator.animate { [weak self] in
             guard let self = self else {
                 return
             }
 
-            toViewController.view.frame.origin.y = self.screenHeight - viewHeight - model.inset
+            toView?.frame.origin.y = self.screenHeight - viewHeight - model.inset
             
             if self.model.isModalInPresentation {
                 UIImpactFeedbackGenerator(style: .light).impactOccurred()
@@ -69,10 +70,7 @@ final class PullerAnimationController: NSObject {
                          to toViewController: UIViewController,
                          using transitionContext: UIViewControllerContextTransitioning) {
         
-        let indexOfShadowView = 1
-        transitionContext.containerView.insertSubview(fromViewController.view,
-                                                      at: indexOfShadowView + 1)
-        
+        let toView = pullerPresentationController?.toView
         let hasOutsideDragIndicator = model.dragIndicator.isInside == false
         
         var dragIndicatorView: PullerDragIndicatorView?
@@ -93,10 +91,10 @@ final class PullerAnimationController: NSObject {
                 return
             }
             if self.pullerMovement == .horizontal {
-                fromViewController.view.frame.origin.x = self.screenWidth
+                toView?.frame.origin.x = self.screenWidth
             } else {
                 let value = UIScreen.main.bounds.maxY
-                fromViewController.view.frame.origin.y = value
+                toView?.frame.origin.y = value
                 shadowView?.frame.origin.y = value
             }
             
@@ -132,7 +130,8 @@ final class PullerAnimationController: NSObject {
             let fitsContentDetent = pullerPresentationController?.makeFitsContentDetent(height: defaultHeight) ?? .large
             pullerPresentationController?.isFitContent = true
             pullerPresentationController?.defaultViewHeight = screenHeight * fitsContentDetent.value
-            
+            pullerPresentationController?.embedViewToScrollView()
+
             var detents = [fitsContentDetent]
             for detent in model.detents {
                 if !detent.isFitContent && detent.value < fitsContentDetent.value {

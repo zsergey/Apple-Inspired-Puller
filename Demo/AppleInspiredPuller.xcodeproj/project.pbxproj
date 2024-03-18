@@ -12,6 +12,7 @@
 		AD2E730129F8FE3700E9C7EF /* ImageContentViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD2E730029F8FE3700E9C7EF /* ImageContentViewController.swift */; };
 		AD2FDE74299D20EB007FA7B1 /* AppleSheet.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD2FDE73299D20EB007FA7B1 /* AppleSheet.swift */; };
 		AD30F2F429CB4C4E0056BB40 /* UISegmentedControlExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD30F2F329CB4C4E0056BB40 /* UISegmentedControlExtensions.swift */; };
+		AD51C2B02BADFDFB00B196F1 /* Puller in Frameworks */ = {isa = PBXBuildFile; productRef = AD51C2AF2BADFDFB00B196F1 /* Puller */; };
 		ADCBFD6329E9393700A956AC /* SwiftUIViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = ADCBFD6229E9393700A956AC /* SwiftUIViewController.swift */; };
 		ADCC4B3529CB126E00527E3C /* AppleDetent.swift in Sources */ = {isa = PBXBuildFile; fileRef = ADCC4B3429CB126E00527E3C /* AppleDetent.swift */; };
 		ADCC4B6029CB340400527E3C /* MainViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = ADCC4B5529CB340400527E3C /* MainViewController.swift */; };
@@ -25,7 +26,6 @@
 		ADCD8038299BD2FE006713AA /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = ADCD8037299BD2FE006713AA /* Assets.xcassets */; };
 		ADCD803B299BD2FE006713AA /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = ADCD8039299BD2FE006713AA /* LaunchScreen.storyboard */; };
 		ADD0C9E129D5B06000472023 /* TextViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = ADD0C9E029D5B06000472023 /* TextViewController.swift */; };
-		ADFB8F682B9A241D003868FB /* Puller in Frameworks */ = {isa = PBXBuildFile; productRef = ADFB8F672B9A241D003868FB /* Puller */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -58,7 +58,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				ADFB8F682B9A241D003868FB /* Puller in Frameworks */,
+				AD51C2B02BADFDFB00B196F1 /* Puller in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -158,7 +158,7 @@
 			);
 			name = AppleInspiredPuller;
 			packageProductDependencies = (
-				ADFB8F672B9A241D003868FB /* Puller */,
+				AD51C2AF2BADFDFB00B196F1 /* Puller */,
 			);
 			productName = SheetsByApple;
 			productReference = ADCD802B299BD2FD006713AA /* AppleInspiredPuller.app */;
@@ -191,7 +191,7 @@
 			);
 			mainGroup = ADCD8022299BD2FD006713AA;
 			packageReferences = (
-				ADFB8F662B9A241D003868FB /* XCRemoteSwiftPackageReference "Apple-Inspired-Puller" */,
+				AD51C2AE2BADFDFB00B196F1 /* XCRemoteSwiftPackageReference "Apple-Inspired-Puller" */,
 			);
 			productRefGroup = ADCD802C299BD2FD006713AA /* Products */;
 			projectDirPath = "";
@@ -463,7 +463,7 @@
 /* End XCConfigurationList section */
 
 /* Begin XCRemoteSwiftPackageReference section */
-		ADFB8F662B9A241D003868FB /* XCRemoteSwiftPackageReference "Apple-Inspired-Puller" */ = {
+		AD51C2AE2BADFDFB00B196F1 /* XCRemoteSwiftPackageReference "Apple-Inspired-Puller" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/zsergey/Apple-Inspired-Puller.git";
 			requirement = {
@@ -474,9 +474,9 @@
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
-		ADFB8F672B9A241D003868FB /* Puller */ = {
+		AD51C2AF2BADFDFB00B196F1 /* Puller */ = {
 			isa = XCSwiftPackageProductDependency;
-			package = ADFB8F662B9A241D003868FB /* XCRemoteSwiftPackageReference "Apple-Inspired-Puller" */;
+			package = AD51C2AE2BADFDFB00B196F1 /* XCRemoteSwiftPackageReference "Apple-Inspired-Puller" */;
 			productName = Puller;
 		};
 /* End XCSwiftPackageProductDependency section */

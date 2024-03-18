@@ -26,7 +26,8 @@ class PresentationSettings {
     func makePullerModel(detents: [PullerModel.Detent]? = nil,
                          isSettings: Bool = false,
                          hasDynamicHeight: Bool = true,
-                         hasCircleCloseButton: Bool = true) -> PullerModel {
+                         hasCircleCloseButton: Bool = true,
+                         embeddingViewToScrollView: Bool = false) -> PullerModel {
         var model = PullerModel(animator: animator.duration(isSettings ? 0.5 : (slowAnimations ? 5 : 0.5)),
                                 detents: detents ?? [.custom(0.25), .medium, .large],
                                 dragIndicator: dragIndicator,
@@ -36,7 +37,8 @@ class PresentationSettings {
                                 largestUndimmedDetent: largestUndimmedDetent,
                                 hasDynamicHeight: hasDynamicHeight,
                                 hasCircleCloseButton: isSettings ? self.hasCircleCloseButton : hasCircleCloseButton,
-                                supportsInteractivePopGesture: supportsInteractivePopGesture)
+                                supportsInteractivePopGesture: supportsInteractivePopGesture,
+                                embeddingViewToScrollView: embeddingViewToScrollView)
         model.onChangeDetent = { detent in
             print("change to \(detent)")
         }
