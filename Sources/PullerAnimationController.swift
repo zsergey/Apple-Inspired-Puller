@@ -34,10 +34,10 @@ final class PullerAnimationController: NSObject {
                          until detent: PullerModel.Detent,
                          using transitionContext: UIViewControllerContextTransitioning) {
         
-        toViewController.view.frame.origin.y = UIScreen.main.bounds.maxY
         previousCornerRadius = fromViewController.view.layer.cornerRadius
 
         let adjustedDetent = adjustDetent(detent, toViewController: toViewController)
+        toViewController.view.frame.origin.y = UIScreen.main.bounds.maxY
         let toView = pullerPresentationController?.toView
         let viewHeight = screenHeight * adjustedDetent.value - model.inset
         let frame = toViewController.view.frame
@@ -140,7 +140,8 @@ final class PullerAnimationController: NSObject {
             }
             detents = detents.sorted(by: <)
             pullerPresentationController?.apply(detents: detents)
-             
+            pullerPresentationController?.updateFirstDetentAsSelected()
+            
             return detents.first ?? fitsContentDetent
             
         } else if detent.isFitContent {

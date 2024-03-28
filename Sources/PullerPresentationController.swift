@@ -256,8 +256,6 @@ final public class PullerPresentationController: UIPresentationController {
         if scrollView == nil {
             setupScrollView(toViewController.findScrollView())
         }
-        
-        updateFirstDetentAsSelected()
     }
     
     public override func viewWillTransition(to size: CGSize,
@@ -317,7 +315,7 @@ final public class PullerPresentationController: UIPresentationController {
         containerView?.layoutIfNeeded()
     }
     
-    private func updateFirstDetentAsSelected() {
+    func updateFirstDetentAsSelected() {
         if selectedDetent == .fitsContent {
             setFirstDetentAsSelected()
         }
