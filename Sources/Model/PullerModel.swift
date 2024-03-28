@@ -67,6 +67,9 @@ public struct PullerModel {
     /// Embedding view of `UIViewController` to `UIScrollView` when you use `fitsContent` detent in case of huge height of the view.
     public var embeddingViewToScrollView: Bool
 
+    /// Uses compact width size on iPads.
+    public var isCompactPadSize: Bool
+    
     public init(animator: PullerAnimator = .default,
                 detents: [Detent],
                 cornerRadius: CGFloat = 16,
@@ -80,7 +83,8 @@ public struct PullerModel {
                 hasDynamicHeight: Bool = true,
                 hasCircleCloseButton: Bool = true,
                 supportsInteractivePopGesture: Bool = true,
-                embeddingViewToScrollView: Bool = false) {
+                embeddingViewToScrollView: Bool = false,
+                isCompactPadSize: Bool = true) {
         self.detents = detents
         self.animator = animator
         self.cornerRadius = cornerRadius
@@ -95,6 +99,7 @@ public struct PullerModel {
         self.hasCircleCloseButton = hasCircleCloseButton
         self.supportsInteractivePopGesture = supportsInteractivePopGesture
         self.embeddingViewToScrollView = embeddingViewToScrollView
+        self.isCompactPadSize = isCompactPadSize
     }
 }
 

@@ -117,7 +117,8 @@ final public class PullerPresentationController: UIPresentationController {
     private var closeButton: UIButton?
     
     private var pullerWidth: CGFloat {
-        UIDevice.current.userInterfaceIdiom == .pad ? max(screenWidth, screenHeight) * 0.4 : min(screenWidth, screenHeight)
+        
+        UIDevice.current.userInterfaceIdiom == .pad && model.isCompactPadSize ? max(screenWidth, screenHeight) * 0.4 : min(screenWidth, screenHeight)
     }
     
     // MARK: - Public methods
